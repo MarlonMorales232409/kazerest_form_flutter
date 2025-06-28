@@ -12,6 +12,8 @@ class QuestionnaireController extends GetxController {
   var dragDirection = ''.obs; // 'left', 'right', or ''
   var dragOffset = 0.0.obs; // Current drag position
   var isDragging = false.obs; // Whether user is currently dragging
+  var isCardExiting = false.obs; // Whether card is exiting with animation
+  var cardExitDirection = ''.obs; // 'left' or 'right' for exit animation
   
   // Step 2: Priority Ordering
   var priorityModules = <SystemModule>[].obs;
@@ -61,15 +63,36 @@ class QuestionnaireController extends GetxController {
   void swipeLeft(SystemModule module) {
     HapticFeedback.lightImpact(); // Gentler feedback
     rejectedModules.add(module);
-    _resetDragState();
-    nextCard();
+    _animateCardExit('left');
   }
   
   void swipeRight(SystemModule module) {
     HapticFeedback.lightImpact(); // Gentler feedback
     interestedModules.add(module);
-    _resetDragState();
-    nextCard();
+    _animateCardExit('right');
+  }
+
+  void _animateCardExit(String direction) {
+    isCardExiting.value = true;
+    cardExitDirection.value = direction;
+    
+    // Wait for exit animation to complete, then show next card
+    Future.delayed(const Duration(milliseconds: 400), () {
+      _proceedToNextCard();
+    });
+  }
+
+  void _proceedToNextCard() {
+    if (currentCardIndex.value < systemModules.length - 1) {
+      // First, completely reset all drag state to ensure clean slate
+      _resetDragState();
+      
+      // Then increment the card index - new card appears instantly
+      currentCardIndex.value++;
+    } else {
+      _resetDragState();
+      goToStep(1); // Go to priority ordering
+    }
   }
   
   void onDragStart(SystemModule module) {
@@ -129,6 +152,8 @@ class QuestionnaireController extends GetxController {
     dragDirection.value = '';
     dragOffset.value = 0.0;
     isDragging.value = false;
+    isCardExiting.value = false;
+    cardExitDirection.value = '';
   }
   
   void nextCard() {

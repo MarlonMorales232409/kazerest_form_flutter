@@ -151,6 +151,7 @@ class InterestCardsView extends StatelessWidget {
             // Current card with drag functionality
             _buildDraggableCard(
               systemModules[controller.currentCardIndex.value],
+              key: ValueKey('card_${controller.currentCardIndex.value}'),
             ),
             // Drag indicators
             _buildDragIndicators(),
@@ -163,18 +164,35 @@ class InterestCardsView extends StatelessWidget {
   Widget _buildSecondCard() {
     return Obx(() {
       final dragOffset = controller.dragOffset.value;
-      final nextCardOffset = dragOffset * 0.05; // More subtle movement
-      final nextCardScale = 0.92 + (dragOffset.abs() * 0.0005).clamp(0.0, 0.03); // Gentler scaling
-      final nextCardOpacity = 0.7 + (dragOffset.abs() * 0.001).clamp(0.0, 0.2); // Smoother opacity
+      final isCardExiting = controller.isCardExiting.value;
+      
+      // When the main card is exiting, the second card should move up smoothly
+      final nextCardOffset = isCardExiting ? 0.0 : dragOffset * 0.05;
+      
+      final nextCardScale = isCardExiting 
+          ? 1.0  // Scale up to full size when becoming main card
+          : 0.92 + (dragOffset.abs() * 0.0005).clamp(0.0, 0.03);
+              
+      final nextCardOpacity = isCardExiting 
+          ? 1.0  // Full opacity when becoming main card
+          : 0.7 + (dragOffset.abs() * 0.001).clamp(0.0, 0.2);
+      
+      final duration = isCardExiting 
+          ? const Duration(milliseconds: 600)  // Smooth transition to main card
+          : const Duration(milliseconds: 200);
+      
+      final curve = isCardExiting 
+          ? Curves.easeOutCubic
+          : Curves.easeOut;
       
       return AnimatedContainer(
-        duration: const Duration(milliseconds: 200), // Smooth transition
-        curve: Curves.easeOut,
+        duration: duration,
+        curve: curve,
         transform: Matrix4.identity()
           ..scale(nextCardScale)
-          ..translate(nextCardOffset, 8),
+          ..translate(nextCardOffset, isCardExiting ? 0 : 8),
         child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 200),
+          duration: duration,
           opacity: nextCardOpacity,
           child: _buildModuleCard(
             systemModules[controller.currentCardIndex.value + 1],
@@ -565,34 +583,69 @@ class InterestCardsView extends StatelessWidget {
     });
   }
 
-  Widget _buildDraggableCard(SystemModule module) {
-    return Obx(() {
+  Widget _buildDraggableCard(SystemModule module, {Key? key}) {
+    return Obx(
+      key: key,
+      () {
       final dragOffset = controller.dragOffset.value;
       final isDragging = controller.isDragging.value;
-      final maxDragDistance = 150.0; // Increased for smoother feel
+      final isExiting = controller.isCardExiting.value;
+      final exitDirection = controller.cardExitDirection.value;
+      final maxDragDistance = 150.0;
       
-      // More subtle rotation based on drag position
-      final rotation = (dragOffset / maxDragDistance) * 0.1; // Reduced rotation
+      // Calculate exit animation values
+      double exitTranslation = 0.0;
+      double exitRotation = 0.0;
+      double exitScale = 1.0;
+      double exitOpacity = 1.0;
       
-      // Smoother scale transition
-      final scale = isDragging ? 1.02 : 1.0; // Less aggressive scaling
+      if (isExiting) {
+        exitTranslation = exitDirection == 'left' ? -400.0 : 400.0;
+        exitRotation = exitDirection == 'left' ? -0.3 : 0.3;
+        exitScale = 0.8;
+        exitOpacity = 0.0;
+      }
       
-      // Gentler opacity changes
-      final opacity = isDragging ? 0.95 : 1.0; // Less dramatic opacity change
+      // Animation values based on state
+      final rotation = isExiting 
+          ? exitRotation 
+          : (dragOffset / maxDragDistance) * 0.1;
+      
+      final scale = isExiting 
+          ? exitScale 
+          : (isDragging ? 1.02 : 1.0);
+      
+      final opacity = isExiting 
+          ? exitOpacity 
+          : (isDragging ? 0.95 : 1.0);
+      
+      final translation = isExiting 
+          ? exitTranslation 
+          : (dragOffset * 0.8);
       
       return GestureDetector(
-        onPanStart: (details) => controller.onDragStart(module),
-        onPanUpdate: (details) => controller.onDragUpdate(details.delta.dx),
-        onPanEnd: (details) => controller.onDragEnd(details.velocity.pixelsPerSecond.dx),
+        onPanStart: isExiting ? null : (details) => controller.onDragStart(module),
+        onPanUpdate: isExiting ? null : (details) => controller.onDragUpdate(details.delta.dx),
+        onPanEnd: isExiting ? null : (details) => controller.onDragEnd(details.velocity.pixelsPerSecond.dx),
         child: AnimatedContainer(
-          duration: isDragging ? Duration.zero : const Duration(milliseconds: 600), // Longer return animation
-          curve: isDragging ? Curves.linear : Curves.easeOutBack, // Smoother curve
+          duration: isExiting 
+              ? const Duration(milliseconds: 400)
+              : isDragging 
+                  ? Duration.zero 
+                  : const Duration(milliseconds: 600),
+          curve: isExiting 
+              ? Curves.easeInBack
+              : isDragging 
+                  ? Curves.linear 
+                  : Curves.easeOutBack,
           transform: Matrix4.identity()
-            ..translate(dragOffset * 0.8, 0.0) // Slightly dampened movement
+            ..translate(translation, 0.0)
             ..rotateZ(rotation)
             ..scale(scale),
           child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300), // Longer opacity transition
+            duration: isExiting 
+                ? const Duration(milliseconds: 300)
+                : const Duration(milliseconds: 300),
             opacity: opacity,
             child: Container(
               decoration: BoxDecoration(
@@ -610,7 +663,8 @@ class InterestCardsView extends StatelessWidget {
           ),
         ),
       );
-    });
+    },
+    );
   }
 
   Color _getShadowColor(double dragOffset, bool isDragging) {
@@ -637,10 +691,14 @@ class InterestCardsView extends StatelessWidget {
     return Obx(() {
       final dragOffset = controller.dragOffset.value;
       final isDragging = controller.isDragging.value;
+      final isCardExiting = controller.isCardExiting.value;
       
-      if (!isDragging && dragOffset.abs() < 15) return const SizedBox.shrink(); // Higher threshold
+      // Hide indicators during card transitions or when not dragging significantly
+      if (isCardExiting || (!isDragging && dragOffset.abs() < 15)) {
+        return const SizedBox.shrink();
+      }
       
-      final leftOpacity = dragOffset < 0 ? (dragOffset.abs() / 150).clamp(0.0, 0.9) : 0.0; // Smoother progression
+      final leftOpacity = dragOffset < 0 ? (dragOffset.abs() / 150).clamp(0.0, 0.9) : 0.0;
       final rightOpacity = dragOffset > 0 ? (dragOffset / 150).clamp(0.0, 0.9) : 0.0;
       
       return Positioned.fill(
