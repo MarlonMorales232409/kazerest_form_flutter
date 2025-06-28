@@ -3,33 +3,37 @@ import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
 import 'package:kazerest_form/config/firebase_service.dart';
+import 'package:kazerest_form/config/dark_theme.dart';
 
 class UserDataFormView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
-  final FirebaseService _firebaseService = FirebaseService();
   final _formKey = GlobalKey<FormState>();
 
-  UserDataFormView({Key? key}) : super(key: key);
+  UserDataFormView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
-              Expanded(
-                child: _buildForm(),
-              ),
-              const SizedBox(height: 24),
-              _buildNavigationButtons(),
-              const SizedBox(height: 16),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DarkTheme.backgroundGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: _buildForm(),
+                ),
+                const SizedBox(height: 24),
+                _buildNavigationButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -46,8 +50,8 @@ class UserDataFormView extends StatelessWidget {
               onPressed: () => controller.previousStep(),
               icon: const Icon(Icons.arrow_back_ios),
               style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF6B7280),
+                backgroundColor: DarkTheme.backgroundCard,
+                foregroundColor: DarkTheme.textSecondary,
               ),
             ),
             const SizedBox(width: 16),
@@ -57,7 +61,7 @@ class UserDataFormView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: DarkTheme.textPrimary,
                 ),
               ),
             ),
@@ -123,7 +127,7 @@ class UserDataFormView extends StatelessWidget {
   Widget _buildPersonalInfoSection() {
     return Card(
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: DarkTheme.shadowMedium,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -131,7 +135,7 @@ class UserDataFormView extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
+          color: DarkTheme.backgroundCard,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,12 +146,12 @@ class UserDataFormView extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1),
+                    color: DarkTheme.primaryPurple,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
                     Icons.person,
-                    color: Colors.white,
+                    color: DarkTheme.textPrimary,
                     size: 20,
                   ),
                 ),
@@ -157,7 +161,7 @@ class UserDataFormView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
+                    color: DarkTheme.textPrimary,
                   ),
                 ),
               ],
@@ -215,7 +219,7 @@ class UserDataFormView extends StatelessWidget {
   Widget _buildBusinessInfoSection() {
     return Card(
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: DarkTheme.shadowMedium,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -223,7 +227,7 @@ class UserDataFormView extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
+          color: DarkTheme.backgroundCard,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,12 +238,12 @@ class UserDataFormView extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF059669),
+                    color: DarkTheme.accentGreen,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
                     Icons.business,
-                    color: Colors.white,
+                    color: DarkTheme.textPrimary,
                     size: 20,
                   ),
                 ),
@@ -249,7 +253,7 @@ class UserDataFormView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
+                    color: DarkTheme.textPrimary,
                   ),
                 ),
               ],
@@ -298,7 +302,7 @@ class UserDataFormView extends StatelessWidget {
   Widget _buildAdditionalInfoSection() {
     return Card(
       elevation: 2,
-      shadowColor: Colors.black.withOpacity(0.1),
+      shadowColor: DarkTheme.shadowMedium,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
@@ -306,7 +310,7 @@ class UserDataFormView extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
+          color: DarkTheme.backgroundCard,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,12 +321,12 @@ class UserDataFormView extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B),
+                    color: DarkTheme.accentAmber,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const Icon(
                     Icons.comment,
-                    color: Colors.white,
+                    color: DarkTheme.textPrimary,
                     size: 20,
                   ),
                 ),
@@ -332,7 +336,7 @@ class UserDataFormView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1F2937),
+                    color: DarkTheme.textPrimary,
                   ),
                 ),
               ],
@@ -368,7 +372,7 @@ class UserDataFormView extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: DarkTheme.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -377,37 +381,38 @@ class UserDataFormView extends StatelessWidget {
           maxLines: maxLines,
           onChanged: onChanged,
           validator: validator,
+          style: const TextStyle(color: DarkTheme.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
             prefixIcon: Icon(
               icon,
-              color: const Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
               size: 20,
             ),
             filled: true,
-            fillColor: const Color(0xFFF9FAFB),
+            fillColor: DarkTheme.backgroundCardElevated,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: DarkTheme.borderLight),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: DarkTheme.borderLight),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.primaryPurple, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
             ),
             hintStyle: const TextStyle(
-              color: Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
               fontSize: 14,
             ),
             contentPadding: const EdgeInsets.symmetric(
@@ -436,7 +441,7 @@ class UserDataFormView extends StatelessWidget {
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF374151),
+            color: DarkTheme.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -445,33 +450,33 @@ class UserDataFormView extends StatelessWidget {
             hintText: hint,
             prefixIcon: Icon(
               icon,
-              color: const Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
               size: 20,
             ),
             filled: true,
-            fillColor: const Color(0xFFF9FAFB),
+            fillColor: DarkTheme.backgroundCardElevated,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: DarkTheme.borderLight),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFE5E7EB)),
+              borderSide: const BorderSide(color: DarkTheme.borderLight),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.primaryPurple, width: 2),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 2),
+              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
             ),
             hintStyle: const TextStyle(
-              color: Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
               fontSize: 14,
             ),
             contentPadding: const EdgeInsets.symmetric(
@@ -479,10 +484,15 @@ class UserDataFormView extends StatelessWidget {
               vertical: 16,
             ),
           ),
+          dropdownColor: DarkTheme.backgroundCard,
+          style: const TextStyle(color: DarkTheme.textPrimary),
           items: items.map((String item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(
+                item,
+                style: const TextStyle(color: DarkTheme.textPrimary),
+              ),
             );
           }).toList(),
           onChanged: onChanged,
@@ -540,7 +550,8 @@ class UserDataFormView extends StatelessWidget {
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.white,
+            color: DarkTheme.backgroundCard,
+            border: Border.all(color: DarkTheme.borderLight),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -549,12 +560,12 @@ class UserDataFormView extends StatelessWidget {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981),
+                  color: DarkTheme.accentGreen,
                   borderRadius: BorderRadius.circular(40),
                 ),
                 child: const Icon(
                   Icons.check,
-                  color: Colors.white,
+                  color: DarkTheme.textPrimary,
                   size: 40,
                 ),
               ),
@@ -564,7 +575,7 @@ class UserDataFormView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: DarkTheme.textPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -573,7 +584,7 @@ class UserDataFormView extends StatelessWidget {
                 'Gracias por completar la evaluación. Hemos recibido tus respuestas y te contactaremos pronto con una propuesta personalizada.',
                 style: TextStyle(
                   fontSize: 16,
-                  color: Color(0xFF6B7280),
+                  color: DarkTheme.textSecondary,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,
@@ -600,7 +611,7 @@ class UserDataFormView extends StatelessWidget {
                     Get.back(); // Go back to previous screen
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6366F1),
+                    backgroundColor: DarkTheme.primaryPurple,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -610,7 +621,7 @@ class UserDataFormView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: DarkTheme.textPrimary,
                     ),
                   ),
                 ),

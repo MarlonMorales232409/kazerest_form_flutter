@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/model/model.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/config/dark_theme.dart';
 
 class PriorityOrderingView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -12,22 +13,26 @@ class PriorityOrderingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
-              Expanded(
-                child: Obx(() => _buildPriorityList()),
-              ),
-              const SizedBox(height: 24),
-              _buildNavigationButtons(),
-              const SizedBox(height: 16),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DarkTheme.backgroundGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: Obx(() => _buildPriorityList()),
+                ),
+                const SizedBox(height: 24),
+                _buildNavigationButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -40,12 +45,18 @@ class PriorityOrderingView extends StatelessWidget {
       children: [
         Row(
           children: [
-            IconButton(
-              onPressed: () => controller.previousStep(),
-              icon: const Icon(Icons.arrow_back_ios),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF6B7280),
+            Container(
+              decoration: BoxDecoration(
+                color: DarkTheme.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: DarkTheme.glassBorder),
+              ),
+              child: IconButton(
+                onPressed: () => controller.previousStep(),
+                icon: const Icon(Icons.arrow_back_ios),
+                style: IconButton.styleFrom(
+                  foregroundColor: DarkTheme.textSecondary,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -55,7 +66,7 @@ class PriorityOrderingView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: DarkTheme.textPrimary,
                 ),
               ),
             ),
@@ -66,7 +77,7 @@ class PriorityOrderingView extends StatelessWidget {
           'Arrastra y ordena los módulos según la importancia para tu negocio. El primer elemento será tu máxima prioridad.',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFF6B7280),
+            color: DarkTheme.textSecondary,
             height: 1.5,
           ),
         ),
@@ -74,16 +85,37 @@ class PriorityOrderingView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF6366F1).withOpacity(0.1),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+            border: Border.all(color: DarkTheme.primaryPurple.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.primaryPurple.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             children: [
-              const Icon(
-                Icons.info_outline,
-                color: Color(0xFF6366F1),
-                size: 20,
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: DarkTheme.primaryGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.info_outline,
+                  color: DarkTheme.textPrimary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -92,7 +124,7 @@ class PriorityOrderingView extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF6366F1),
+                    color: DarkTheme.textSecondary,
                   ),
                 )),
               ),
@@ -139,16 +171,24 @@ class PriorityOrderingView extends StatelessWidget {
       key: ValueKey(module.id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Card(
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        elevation: 4,
+        shadowColor: DarkTheme.shadowMedium,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            gradient: DarkTheme.cardGradient,
+            border: Border.all(color: DarkTheme.glassBorder),
+            boxShadow: [
+              BoxShadow(
+                color: _getPriorityColor(index).withOpacity(0.2),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -157,8 +197,22 @@ class PriorityOrderingView extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: _getPriorityColor(index),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      _getPriorityColor(index),
+                      _getPriorityColor(index).withOpacity(0.8),
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getPriorityColor(index).withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Text(
@@ -166,7 +220,7 @@ class PriorityOrderingView extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: DarkTheme.textPrimary,
                     ),
                   ),
                 ),
@@ -182,7 +236,7 @@ class PriorityOrderingView extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF1F2937),
+                        color: DarkTheme.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -190,7 +244,7 @@ class PriorityOrderingView extends StatelessWidget {
                       module.description,
                       style: const TextStyle(
                         fontSize: 14,
-                        color: Color(0xFF6B7280),
+                        color: DarkTheme.textSecondary,
                         height: 1.4,
                       ),
                       maxLines: 2,
@@ -204,12 +258,13 @@ class PriorityOrderingView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: DarkTheme.backgroundCardElevated,
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: DarkTheme.borderLight),
                 ),
                 child: const Icon(
                   Icons.drag_handle,
-                  color: Color(0xFF9CA3AF),
+                  color: DarkTheme.textMuted,
                   size: 20,
                 ),
               ),
@@ -242,12 +297,20 @@ class PriorityOrderingView extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  DarkTheme.backgroundCard,
+                  DarkTheme.backgroundCardElevated,
+                ],
+              ),
               borderRadius: BorderRadius.circular(40),
+              border: Border.all(color: DarkTheme.borderLight),
             ),
             child: const Icon(
               Icons.reorder,
-              color: Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
               size: 40,
             ),
           ),
@@ -257,7 +320,7 @@ class PriorityOrderingView extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF6B7280),
+              color: DarkTheme.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -266,7 +329,7 @@ class PriorityOrderingView extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Color(0xFF9CA3AF),
+              color: DarkTheme.textMuted,
             ),
           ),
           const SizedBox(height: 24),

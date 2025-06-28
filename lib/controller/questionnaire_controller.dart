@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 import 'package:kazerest_form/model/model.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
 
@@ -7,6 +8,10 @@ class QuestionnaireController extends GetxController {
   var currentCardIndex = 0.obs;
   var interestedModules = <SystemModule>[].obs;
   var rejectedModules = <SystemModule>[].obs;
+  var draggedModule = Rxn<SystemModule>();
+  var dragDirection = ''.obs; // 'left', 'right', or ''
+  var dragOffset = 0.0.obs; // Current drag position
+  var isDragging = false.obs; // Whether user is currently dragging
   
   // Step 2: Priority Ordering
   var priorityModules = <SystemModule>[].obs;
@@ -54,13 +59,76 @@ class QuestionnaireController extends GetxController {
   
   // Step 1 Methods
   void swipeLeft(SystemModule module) {
+    HapticFeedback.lightImpact(); // Gentler feedback
     rejectedModules.add(module);
+    _resetDragState();
     nextCard();
   }
   
   void swipeRight(SystemModule module) {
+    HapticFeedback.lightImpact(); // Gentler feedback
     interestedModules.add(module);
+    _resetDragState();
     nextCard();
+  }
+  
+  void onDragStart(SystemModule module) {
+    draggedModule.value = module;
+    dragDirection.value = '';
+    dragOffset.value = 0.0;
+    isDragging.value = true;
+  }
+  
+  void onDragUpdate(double dx) {
+    if (isDragging.value) {
+      // Apply dampening for smoother movement
+      final dampedDx = dx * 0.8;
+      dragOffset.value += dampedDx;
+      
+      // Provide haptic feedback when crossing thresholds
+      final previousDirection = dragDirection.value;
+      
+      // Update direction based on cumulative offset with higher thresholds for smoother experience
+      if (dragOffset.value < -60) { // Increased threshold
+        dragDirection.value = 'left';
+        if (previousDirection != 'left') {
+          HapticFeedback.selectionClick(); // Gentler haptic feedback
+        }
+      } else if (dragOffset.value > 60) { // Increased threshold
+        dragDirection.value = 'right';
+        if (previousDirection != 'right') {
+          HapticFeedback.selectionClick(); // Gentler haptic feedback
+        }
+      } else {
+        dragDirection.value = '';
+      }
+    }
+  }
+  
+  void onDragEnd(double velocityX) {
+    if (draggedModule.value != null && isDragging.value) {
+      final threshold = 120.0; // Increased threshold for less sensitive swipes
+      final shouldSwipeByVelocity = velocityX.abs() > 800; // Higher velocity threshold
+      final shouldSwipeByPosition = dragOffset.value.abs() > threshold;
+      
+      if (shouldSwipeByVelocity || shouldSwipeByPosition) {
+        if (dragOffset.value < 0 || velocityX < -800) {
+          swipeLeft(draggedModule.value!);
+        } else if (dragOffset.value > 0 || velocityX > 800) {
+          swipeRight(draggedModule.value!);
+        }
+      } else {
+        // Reset position if not enough to trigger swipe
+        _resetDragState();
+      }
+    }
+  }
+  
+  void _resetDragState() {
+    draggedModule.value = null;
+    dragDirection.value = '';
+    dragOffset.value = 0.0;
+    isDragging.value = false;
   }
   
   void nextCard() {

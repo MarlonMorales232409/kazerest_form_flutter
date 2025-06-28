@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/config/dark_theme.dart';
 
 class CalificationsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -12,22 +13,26 @@ class CalificationsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
-              Expanded(
-                child: _buildCalificationsList(),
-              ),
-              const SizedBox(height: 24),
-              _buildNavigationButtons(),
-              const SizedBox(height: 16),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DarkTheme.backgroundGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: _buildCalificationsList(),
+                ),
+                const SizedBox(height: 24),
+                _buildNavigationButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -40,12 +45,18 @@ class CalificationsView extends StatelessWidget {
       children: [
         Row(
           children: [
-            IconButton(
-              onPressed: () => controller.previousStep(),
-              icon: const Icon(Icons.arrow_back_ios),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF6B7280),
+            Container(
+              decoration: BoxDecoration(
+                color: DarkTheme.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: DarkTheme.glassBorder),
+              ),
+              child: IconButton(
+                onPressed: () => controller.previousStep(),
+                icon: const Icon(Icons.arrow_back_ios),
+                style: IconButton.styleFrom(
+                  foregroundColor: DarkTheme.textSecondary,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -55,7 +66,7 @@ class CalificationsView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: DarkTheme.textPrimary,
                 ),
               ),
             ),
@@ -66,7 +77,7 @@ class CalificationsView extends StatelessWidget {
           'Califica del 1 al 5 qué tan importante es cada aspecto para tu negocio. Esto nos ayudará a personalizar mejor la solución.',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFF6B7280),
+            color: DarkTheme.textSecondary,
             height: 1.5,
           ),
         ),
@@ -74,25 +85,46 @@ class CalificationsView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF059669).withOpacity(0.1),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF059669).withOpacity(0.2)),
-          ),
-          child: const Row(
-            children: [
-              Icon(
-                Icons.star_outline,
-                color: Color(0xFF059669),
-                size: 20,
+            border: Border.all(color: DarkTheme.accentAmber.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.accentAmber.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              SizedBox(width: 12),
-              Expanded(
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: DarkTheme.amberGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.star_outline,
+                  color: DarkTheme.textPrimary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
                 child: Text(
                   '5 estrellas = Muy importante • 1 estrella = Poco importante',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF059669),
+                    color: DarkTheme.textSecondary,
                   ),
                 ),
               ),
@@ -117,16 +149,24 @@ class CalificationsView extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: Card(
-        elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.1),
+        elevation: 4,
+        shadowColor: DarkTheme.shadowMedium,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            gradient: DarkTheme.cardGradient,
+            border: Border.all(color: DarkTheme.glassBorder),
+            boxShadow: [
+              BoxShadow(
+                color: _getCalificationIcon(index)['color'].withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,16 +174,30 @@ class CalificationsView extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
-                      color: _getCalificationIcon(index)['color'],
-                      borderRadius: BorderRadius.circular(20),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          _getCalificationIcon(index)['color'],
+                          _getCalificationIcon(index)['color'].withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: _getCalificationIcon(index)['color'].withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Icon(
                       _getCalificationIcon(index)['icon'],
-                      color: Colors.white,
-                      size: 20,
+                      color: DarkTheme.textPrimary,
+                      size: 24,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -156,7 +210,7 @@ class CalificationsView extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF1F2937),
+                            color: DarkTheme.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -164,7 +218,7 @@ class CalificationsView extends StatelessWidget {
                           _getCalificationDescription(index),
                           style: const TextStyle(
                             fontSize: 14,
-                            color: Color(0xFF6B7280),
+                            color: DarkTheme.textSecondary,
                             height: 1.4,
                           ),
                         ),
@@ -187,19 +241,19 @@ class CalificationsView extends StatelessWidget {
   Map<String, dynamic> _getCalificationIcon(int index) {
     switch (index) {
       case 0: // Facilidad de Uso
-        return {'icon': Icons.touch_app, 'color': const Color(0xFF6366F1)};
+        return {'icon': Icons.touch_app, 'color': DarkTheme.primaryPurple};
       case 1: // Ahorro de Tiempo
-        return {'icon': Icons.schedule, 'color': const Color(0xFF059669)};
+        return {'icon': Icons.schedule, 'color': DarkTheme.accentGreen};
       case 2: // Reducción de Errores
-        return {'icon': Icons.verified, 'color': const Color(0xFFEF4444)};
+        return {'icon': Icons.verified, 'color': DarkTheme.accentRed};
       case 3: // Mejora en Experiencia del Cliente
-        return {'icon': Icons.sentiment_very_satisfied, 'color': const Color(0xFFF59E0B)};
+        return {'icon': Icons.sentiment_very_satisfied, 'color': DarkTheme.accentAmber};
       case 4: // Control de Costos
-        return {'icon': Icons.savings, 'color': const Color(0xFF8B5CF6)};
+        return {'icon': Icons.savings, 'color': DarkTheme.primaryPurpleDark};
       case 5: // Análisis de Datos
-        return {'icon': Icons.analytics, 'color': const Color(0xFF06B6D4)};
+        return {'icon': Icons.analytics, 'color': DarkTheme.accentCyan};
       default:
-        return {'icon': Icons.star, 'color': const Color(0xFF6366F1)};
+        return {'icon': Icons.star, 'color': DarkTheme.primaryPurple};
     }
   }
 
@@ -235,12 +289,24 @@ class CalificationsView extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              child: Icon(
-                starValue <= currentRating ? Icons.star : Icons.star_border,
-                color: starValue <= currentRating 
-                    ? const Color(0xFFFBBF24) 
-                    : const Color(0xFFD1D5DB),
-                size: 32,
+              child: Container(
+                decoration: starValue <= currentRating ? BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DarkTheme.accentAmber.withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ) : null,
+                child: Icon(
+                  starValue <= currentRating ? Icons.star_rounded : Icons.star_border_rounded,
+                  color: starValue <= currentRating 
+                      ? DarkTheme.accentAmber
+                      : DarkTheme.borderMedium,
+                  size: 36,
+                ),
               ),
             ),
           ),
@@ -257,11 +323,25 @@ class CalificationsView extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: _getRatingColor(currentRating).withOpacity(0.1),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              _getRatingColor(currentRating).withOpacity(0.2),
+              _getRatingColor(currentRating).withOpacity(0.1),
+            ],
+          ),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: _getRatingColor(currentRating).withOpacity(0.3),
+            color: _getRatingColor(currentRating).withOpacity(0.4),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: _getRatingColor(currentRating).withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Text(
           label,

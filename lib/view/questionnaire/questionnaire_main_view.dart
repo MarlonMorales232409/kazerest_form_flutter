@@ -6,18 +6,23 @@ import 'package:kazerest_form/view/questionnaire/priority_ordering_view.dart';
 import 'package:kazerest_form/view/questionnaire/califications_view.dart';
 import 'package:kazerest_form/view/questionnaire/categories_importance_view.dart';
 import 'package:kazerest_form/view/questionnaire/user_data_form_view.dart';
+import 'package:kazerest_form/config/dark_theme.dart';
 
 class QuestionnaireMainView extends StatelessWidget {
   final QuestionnaireController controller = Get.put(QuestionnaireController());
 
-  QuestionnaireMainView({Key? key}) : super(key: key);
+  QuestionnaireMainView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Obx(() => _buildCurrentStep()),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DarkTheme.backgroundGradient,
+        ),
+        child: SafeArea(
+          child: Obx(() => _buildCurrentStep()),
+        ),
       ),
     );
   }
@@ -46,10 +51,10 @@ class StepProgressIndicator extends StatelessWidget {
   final int totalSteps;
 
   const StepProgressIndicator({
-    Key? key,
+    super.key,
     required this.currentStep,
     required this.totalSteps,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +74,22 @@ class StepProgressIndicator extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Container(
-                          height: 4,
+                          height: 6,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(3),
+                            gradient: isActive || isCompleted 
+                                ? DarkTheme.primaryGradient
+                                : null,
                             color: isActive || isCompleted 
-                                ? const Color(0xFF6366F1) 
-                                : const Color(0xFFE5E7EB),
+                                ? null
+                                : DarkTheme.borderLight,
+                            boxShadow: isActive || isCompleted ? [
+                              BoxShadow(
+                                color: DarkTheme.primaryPurple.withOpacity(0.3),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ] : null,
                           ),
                         ),
                       ),
@@ -89,7 +104,7 @@ class StepProgressIndicator extends StatelessWidget {
             'Paso ${currentStep + 1} de $totalSteps',
             style: const TextStyle(
               fontSize: 14,
-              color: Color(0xFF6B7280),
+              color: DarkTheme.textSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -108,37 +123,50 @@ class CustomButton extends StatelessWidget {
   final IconData? icon;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.isEnabled = true,
     this.isSecondary = false,
     this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 56,
+      decoration: BoxDecoration(
+        gradient: isEnabled && !isSecondary ? DarkTheme.primaryGradient : null,
+        borderRadius: BorderRadius.circular(16),
+        border: isSecondary ? Border.all(
+          color: isEnabled ? DarkTheme.primaryPurple : DarkTheme.borderLight,
+          width: 1,
+        ) : null,
+        boxShadow: isEnabled && !isSecondary ? [
+          BoxShadow(
+            color: DarkTheme.primaryPurple.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ] : null,
+      ),
       child: ElevatedButton(
         onPressed: isEnabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: isSecondary 
-              ? Colors.white 
-              : const Color(0xFF6366F1),
+              ? DarkTheme.backgroundCard 
+              : Colors.transparent,
           foregroundColor: isSecondary 
-              ? const Color(0xFF6366F1) 
-              : Colors.white,
-          elevation: isSecondary ? 0 : 2,
-          side: isSecondary 
-              ? const BorderSide(color: Color(0xFF6366F1), width: 1) 
-              : null,
+              ? (isEnabled ? DarkTheme.primaryPurple : DarkTheme.textMuted)
+              : DarkTheme.textPrimary,
+          elevation: 0,
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
           ),
-          disabledBackgroundColor: const Color(0xFFE5E7EB),
-          disabledForegroundColor: const Color(0xFF9CA3AF),
+          disabledBackgroundColor: DarkTheme.borderLight,
+          disabledForegroundColor: DarkTheme.textMuted,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

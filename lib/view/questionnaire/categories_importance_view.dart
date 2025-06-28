@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/config/dark_theme.dart';
 
 class CategoriesImportanceView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -12,22 +13,26 @@ class CategoriesImportanceView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 32),
-              Expanded(
-                child: _buildCategoriesList(),
-              ),
-              const SizedBox(height: 24),
-              _buildNavigationButtons(),
-              const SizedBox(height: 16),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DarkTheme.backgroundGradient,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: _buildCategoriesList(),
+                ),
+                const SizedBox(height: 24),
+                _buildNavigationButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -40,12 +45,18 @@ class CategoriesImportanceView extends StatelessWidget {
       children: [
         Row(
           children: [
-            IconButton(
-              onPressed: () => controller.previousStep(),
-              icon: const Icon(Icons.arrow_back_ios),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFF6B7280),
+            Container(
+              decoration: BoxDecoration(
+                color: DarkTheme.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: DarkTheme.glassBorder),
+              ),
+              child: IconButton(
+                onPressed: () => controller.previousStep(),
+                icon: const Icon(Icons.arrow_back_ios),
+                style: IconButton.styleFrom(
+                  foregroundColor: DarkTheme.textSecondary,
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -55,7 +66,7 @@ class CategoriesImportanceView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: DarkTheme.textPrimary,
                 ),
               ),
             ),
@@ -66,7 +77,7 @@ class CategoriesImportanceView extends StatelessWidget {
           'Ajusta el nivel de importancia de cada categoría tecnológica para tu negocio. Usa el deslizador de 0 a 10.',
           style: TextStyle(
             fontSize: 16,
-            color: Color(0xFF6B7280),
+            color: DarkTheme.textSecondary,
             height: 1.5,
           ),
         ),
@@ -74,25 +85,53 @@ class CategoriesImportanceView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF8B5CF6).withOpacity(0.1),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.2)),
-          ),
-          child: const Row(
-            children: [
-              Icon(
-                Icons.tune,
-                color: Color(0xFF8B5CF6),
-                size: 20,
+            border: Border.all(color: DarkTheme.accentCyan.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.accentCyan.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              SizedBox(width: 12),
-              Expanded(
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      DarkTheme.accentCyan,
+                      DarkTheme.accentCyanLight,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.tune,
+                  color: DarkTheme.textPrimary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
                 child: Text(
                   '0 = Sin importancia • 10 = Máxima importancia',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF8B5CF6),
+                    color: DarkTheme.textSecondary,
                   ),
                 ),
               ),
@@ -122,7 +161,7 @@ class CategoriesImportanceView extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 20),
         child: Card(
           elevation: 2,
-          shadowColor: Colors.black.withOpacity(0.1),
+          shadowColor: DarkTheme.shadowMedium,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -130,7 +169,11 @@ class CategoriesImportanceView extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              color: Colors.white,
+              gradient: DarkTheme.cardGradient,
+              border: Border.all(
+                color: DarkTheme.glassBorder,
+                width: 1,
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +189,7 @@ class CategoriesImportanceView extends StatelessWidget {
                       ),
                       child: Icon(
                         _getCategoryIcon(index),
-                        color: Colors.white,
+                        color: DarkTheme.textPrimary,
                         size: 24,
                       ),
                     ),
@@ -160,7 +203,7 @@ class CategoriesImportanceView extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF1F2937),
+                              color: DarkTheme.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -168,7 +211,7 @@ class CategoriesImportanceView extends StatelessWidget {
                             _getCategoryDescription(index),
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color(0xFF6B7280),
+                              color: DarkTheme.textSecondary,
                               height: 1.4,
                             ),
                           ),
@@ -257,7 +300,7 @@ class CategoriesImportanceView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF9CA3AF),
+                color: DarkTheme.textMuted,
               ),
             ),
             Container(
@@ -283,7 +326,7 @@ class CategoriesImportanceView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: Color(0xFF9CA3AF),
+                color: DarkTheme.textMuted,
               ),
             ),
           ],
@@ -296,7 +339,7 @@ class CategoriesImportanceView extends StatelessWidget {
               thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
               activeTrackColor: _getSliderColor(currentValue),
-              inactiveTrackColor: const Color(0xFFE5E7EB),
+              inactiveTrackColor: DarkTheme.borderLight,
               thumbColor: _getSliderColor(currentValue),
               overlayColor: _getSliderColor(currentValue).withOpacity(0.2),
             ),
