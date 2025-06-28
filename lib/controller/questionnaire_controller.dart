@@ -1,0 +1,163 @@
+import 'package:get/get.dart';
+import 'package:kazerest_form/model/model.dart';
+import 'package:kazerest_form/db_local/db_local.dart';
+
+class QuestionnaireController extends GetxController {
+  // Step 1: Interest Card Slider
+  var currentCardIndex = 0.obs;
+  var interestedModules = <SystemModule>[].obs;
+  var rejectedModules = <SystemModule>[].obs;
+  
+  // Step 2: Priority Ordering
+  var priorityModules = <SystemModule>[].obs;
+  
+  // Step 3: Califications
+  var userCalifications = <String, int>{}.obs;
+  
+  // Step 4: Categories Importance
+  var categoryImportances = <CategoryImportance>[].obs;
+  
+  // Step 5: User Data
+  var userName = ''.obs;
+  var userPhone = ''.obs;
+  var userEmail = ''.obs;
+  var businessName = ''.obs;
+  var userRole = ''.obs;
+  var comments = ''.obs;
+  
+  // Navigation
+  var currentStep = 0.obs;
+  
+  @override
+  void onInit() {
+    super.onInit();
+    initializeCategoryImportances();
+    initializeCalifications();
+  }
+  
+  void initializeCategoryImportances() {
+    categoryImportances.value = categories.map((category) => 
+      CategoryImportance(
+        id: category.id,
+        name: category.name,
+        value: 5,
+        maxValue: category.maxValue,
+      )
+    ).toList();
+  }
+  
+  void initializeCalifications() {
+    for (var calification in califications) {
+      userCalifications[calification.id] = 3; // Default rating
+    }
+  }
+  
+  // Step 1 Methods
+  void swipeLeft(SystemModule module) {
+    rejectedModules.add(module);
+    nextCard();
+  }
+  
+  void swipeRight(SystemModule module) {
+    interestedModules.add(module);
+    nextCard();
+  }
+  
+  void nextCard() {
+    if (currentCardIndex.value < systemModules.length - 1) {
+      currentCardIndex.value++;
+    } else {
+      goToStep(1); // Go to priority ordering
+    }
+  }
+  
+  // Step 2 Methods
+  void reorderModules(int oldIndex, int newIndex) {
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    final item = priorityModules.removeAt(oldIndex);
+    priorityModules.insert(newIndex, item);
+  }
+  
+  // Step 3 Methods
+  void updateCalification(String calificationId, int rating) {
+    userCalifications[calificationId] = rating;
+  }
+  
+  // Step 4 Methods
+  void updateCategoryImportance(String categoryId, double importance) {
+    final index = categoryImportances.indexWhere((ci) => ci.id == categoryId);
+    if (index != -1) {
+      categoryImportances[index] = categoryImportances[index].copyWith(
+        value: importance.round(),
+      );
+      categoryImportances.refresh();
+    }
+  }
+  
+  // Navigation Methods
+  void goToStep(int step) {
+    if (step == 1) {
+      // Prepare priority modules from interested modules
+      priorityModules.value = List.from(interestedModules);
+    }
+    currentStep.value = step;
+  }
+  
+  void nextStep() {
+    if (currentStep.value < 4) {
+      currentStep.value++;
+    }
+  }
+  
+  void previousStep() {
+    if (currentStep.value > 0) {
+      currentStep.value--;
+    }
+  }
+  
+  // Final submission
+  UserAnswer buildUserAnswer() {
+    final priorityMap = <String, SystemModule>{};
+    for (int i = 0; i < priorityModules.length; i++) {
+      priorityMap[(i + 1).toString()] = priorityModules[i];
+    }
+    
+    final userInterests = userCalifications.entries.map((entry) {
+      final calification = califications.firstWhere((c) => c.id == entry.key);
+      return UserInterest(
+        title: calification.name,
+        maxLevel: calification.maxValue,
+        userLevel: entry.value,
+      );
+    }).toList();
+    
+    return UserAnswer(
+      interestedModules: interestedModules,
+      priorityModules: priorityMap,
+      userInterests: userInterests,
+      categoryImportance: categoryImportances,
+      comments: comments.value.isEmpty ? null : comments.value,
+    );
+  }
+  
+  bool canProceedFromStep(int step) {
+    switch (step) {
+      case 0:
+        return currentCardIndex.value >= systemModules.length;
+      case 1:
+        return interestedModules.isNotEmpty;
+      case 2:
+        return userCalifications.isNotEmpty;
+      case 3:
+        return categoryImportances.isNotEmpty;
+      case 4:
+        return userName.value.isNotEmpty && 
+               userEmail.value.isNotEmpty && 
+               businessName.value.isNotEmpty;
+      default:
+        return false;
+    }
+  }
+}
