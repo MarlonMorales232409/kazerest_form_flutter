@@ -35,6 +35,44 @@ class QuestionnaireController extends GetxController {
   // Navigation
   var currentStep = 0.obs;
   
+  // Reset all data for new evaluation
+  void resetAll() {
+    // Step 1: Interest Card Slider
+    currentCardIndex.value = 0;
+    interestedModules.clear();
+    rejectedModules.clear();
+    draggedModule.value = null;
+    dragDirection.value = '';
+    dragOffset.value = 0.0;
+    isDragging.value = false;
+    isCardExiting.value = false;
+    cardExitDirection.value = '';
+    
+    // Step 2: Priority Ordering
+    priorityModules.clear();
+    
+    // Step 3: Califications
+    userCalifications.clear();
+    
+    // Step 4: Categories Importance
+    categoryImportances.clear();
+    
+    // Step 5: User Data
+    userName.value = '';
+    userPhone.value = '';
+    userEmail.value = '';
+    businessName.value = '';
+    userRole.value = '';
+    comments.value = '';
+    
+    // Navigation
+    currentStep.value = 0;
+    
+    // Reinitialize data
+    initializeCategoryImportances();
+    initializeCalifications();
+  }
+  
   @override
   void onInit() {
     super.onInit();
