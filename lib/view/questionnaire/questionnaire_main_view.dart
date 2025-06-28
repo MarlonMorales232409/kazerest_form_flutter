@@ -38,7 +38,7 @@ class QuestionnaireMainView extends StatelessWidget {
       case 3:
         return CategoriesImportanceView();
       case 4:
-        return UserDataFormView();
+        return const UserDataFormView();
       default:
         return InterestCardsView();
     }

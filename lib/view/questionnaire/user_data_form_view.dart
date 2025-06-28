@@ -5,11 +5,16 @@ import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
 import 'package:kazerest_form/config/firebase_service.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 
-class UserDataFormView extends StatelessWidget {
+class UserDataFormView extends StatefulWidget {
+  const UserDataFormView({super.key});
+
+  @override
+  State<UserDataFormView> createState() => _UserDataFormViewState();
+}
+
+class _UserDataFormViewState extends State<UserDataFormView> {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
   final _formKey = GlobalKey<FormState>();
-
-  UserDataFormView({super.key});
 
   @override
   Widget build(BuildContext context) {

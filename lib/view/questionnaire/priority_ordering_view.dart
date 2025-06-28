@@ -43,34 +43,13 @@ class PriorityOrderingView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DarkTheme.backgroundCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: DarkTheme.glassBorder),
-              ),
-              child: IconButton(
-                onPressed: () => controller.previousStep(),
-                icon: const Icon(Icons.arrow_back_ios),
-                style: IconButton.styleFrom(
-                  foregroundColor: DarkTheme.textSecondary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              child: Text(
-                'Ordena por Prioridad',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: DarkTheme.textPrimary,
-                ),
-              ),
-            ),
-          ],
+        const Text(
+          'Ordena por Prioridad',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: DarkTheme.textPrimary,
+          ),
         ),
         const SizedBox(height: 12),
         const Text(
@@ -140,135 +119,138 @@ class PriorityOrderingView extends StatelessWidget {
       return _buildEmptyState();
     }
 
-    return ReorderableListView.builder(
-      itemCount: controller.priorityModules.length,
-      onReorder: controller.reorderModules,
-      proxyDecorator: (child, index, animation) {
-        return AnimatedBuilder(
-          animation: animation,
-          builder: (BuildContext context, Widget? child) {
-            final double animValue = Curves.easeInOut.transform(animation.value);
-            final double elevation = lerpDouble(0, 6, animValue);
-            return Material(
-              elevation: elevation,
-              color: Colors.transparent,
-              shadowColor: Colors.black26,
-              child: child,
-            );
-          },
-          child: child,
-        );
-      },
-      itemBuilder: (context, index) {
-        final module = controller.priorityModules[index];
-        return _buildPriorityItem(module, index, context);
-      },
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: ReorderableListView.builder(
+        itemCount: controller.priorityModules.length,
+        onReorder: (int oldIndex, int newIndex) {
+          controller.reorderModules(oldIndex, newIndex);
+        },
+        buildDefaultDragHandles: false,
+        physics: const BouncingScrollPhysics(),
+        proxyDecorator: (child, index, animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              final double animValue = Curves.easeInOut.transform(animation.value);
+              final double elevation = 0.0 + (6.0 - 0.0) * animValue; // Manual lerp
+              return Material(
+                elevation: elevation,
+                color: Colors.transparent,
+                shadowColor: Colors.black26,
+                child: child,
+              );
+            },
+            child: child,
+          );
+        },
+        itemBuilder: (context, index) {
+          final module = controller.priorityModules[index];
+          return _buildPriorityItem(module, index, context);
+        },
+      ),
     );
   }
 
   Widget _buildPriorityItem(SystemModule module, int index, BuildContext context) {
-    return Container(
-      key: ValueKey(module.id),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Card(
-        elevation: 4,
-        shadowColor: DarkTheme.shadowMedium,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
+    return ReorderableDragStartListener(
+      key: Key('module_${module.id}_$index'), // More unique key
+      index: index,
+      child: Container(
+        key: ValueKey('container_${module.id}_$index'), // Add container key
+        margin: const EdgeInsets.only(bottom: 8),
+        child: Card(
+          elevation: 4,
+          shadowColor: DarkTheme.shadowMedium,
+          shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
-            gradient: DarkTheme.cardGradient,
-            border: Border.all(color: DarkTheme.glassBorder),
-            boxShadow: [
-              BoxShadow(
-                color: _getPriorityColor(index).withOpacity(0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
           ),
-          child: Row(
-            children: [
-              // Priority number
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      _getPriorityColor(index),
-                      _getPriorityColor(index).withOpacity(0.8),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: DarkTheme.cardGradient,
+              border: Border.all(color: DarkTheme.glassBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: _getPriorityColor(index).withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Priority number
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        _getPriorityColor(index),
+                        _getPriorityColor(index).withOpacity(0.8),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _getPriorityColor(index).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: _getPriorityColor(index).withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '${index + 1}',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: DarkTheme.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              // Module content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      module.title,
+                  child: Center(
+                    child: Text(
+                      '${index + 1}',
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                         color: DarkTheme.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      module.description,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: DarkTheme.textSecondary,
-                        height: 1.4,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // Module content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        module.title,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: DarkTheme.textPrimary,
+                        ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        module.description,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: DarkTheme.textSecondary,
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              // Drag handle
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: DarkTheme.backgroundCardElevated,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: DarkTheme.borderLight),
-                ),
-                child: const Icon(
-                  Icons.drag_handle,
+                // Visual indicator that card is draggable
+                const SizedBox(width: 16),
+                Icon(
+                  Icons.drag_indicator,
                   color: DarkTheme.textMuted,
                   size: 20,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -368,9 +350,4 @@ class PriorityOrderingView extends StatelessWidget {
       ],
     );
   }
-}
-
-// Helper function for lerp
-double lerpDouble(double a, double b, double t) {
-  return a + (b - a) * t;
 }

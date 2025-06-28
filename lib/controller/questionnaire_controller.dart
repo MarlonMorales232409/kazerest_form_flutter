@@ -171,6 +171,7 @@ class QuestionnaireController extends GetxController {
     }
     final item = priorityModules.removeAt(oldIndex);
     priorityModules.insert(newIndex, item);
+    priorityModules.refresh(); // Force UI update
   }
   
   // Step 3 Methods
@@ -193,14 +194,23 @@ class QuestionnaireController extends GetxController {
   void goToStep(int step) {
     if (step == 1) {
       // Prepare priority modules from interested modules
-      priorityModules.value = List.from(interestedModules);
+      priorityModules.clear();
+      priorityModules.addAll(interestedModules);
+      priorityModules.refresh();
     }
     currentStep.value = step;
   }
   
   void nextStep() {
     if (currentStep.value < 4) {
-      currentStep.value++;
+      int nextStepValue = currentStep.value + 1;
+      if (nextStepValue == 1) {
+        // Prepare priority modules from interested modules
+        priorityModules.clear();
+        priorityModules.addAll(interestedModules);
+        priorityModules.refresh();
+      }
+      currentStep.value = nextStepValue;
     }
   }
   
