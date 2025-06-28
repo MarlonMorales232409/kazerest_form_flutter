@@ -19,22 +19,101 @@ class InterestCardsView extends StatelessWidget {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: _buildCardStack(),
-                ),
-                const SizedBox(height: 24),
-                _buildActionButtons(),
-                const SizedBox(height: 16),
-              ],
-            ),
+          child: _buildResponsiveLayout(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    
+    if (isDesktop) {
+      return _buildDesktopLayout();
+    } else if (isTablet) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCardStack(),
           ),
+          const SizedBox(height: 24),
+          _buildActionButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCardStack(),
+          ),
+          const SizedBox(height: 24),
+          _buildActionButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1400),
+        padding: const EdgeInsets.all(48.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left side - Header and instructions
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDesktopHeader(),
+                    const SizedBox(height: 32),
+                    _buildDesktopInstructions(),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Card interaction
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _buildCardStack(),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildActionButtons(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -204,85 +283,94 @@ class InterestCardsView extends StatelessWidget {
   }
 
   Widget _buildModuleCard(SystemModule module, {required bool isActive}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutCubic,
-      width: double.infinity,
-      height: 400,
-      margin: const EdgeInsets.symmetric(horizontal: 8),
-      child: Card(
-        elevation: isActive ? 12 : 4,
-        shadowColor: DarkTheme.shadowMedium,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(24),
-            gradient: DarkTheme.cardGradient,
-            border: Border.all(
-              color: DarkTheme.glassBorder,
-              width: 1,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isDesktop = screenWidth > 1024;
+        final cardHeight = isDesktop ? 450.0 : 400.0;
+        final cardMargin = isDesktop ? 16.0 : 8.0;
+        
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          width: double.infinity,
+          height: cardHeight,
+          margin: EdgeInsets.symmetric(horizontal: cardMargin),
+          child: Card(
+            elevation: isActive ? 12 : 4,
+            shadowColor: DarkTheme.shadowMedium,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            boxShadow: isActive ? [
-              BoxShadow(
-                color: DarkTheme.primaryPurple.withOpacity(0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ] : null,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  gradient: DarkTheme.primaryGradient,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DarkTheme.primaryPurple.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24),
+                gradient: DarkTheme.cardGradient,
+                border: Border.all(
+                  color: DarkTheme.glassBorder,
+                  width: 1,
                 ),
-                child: Text(
-                  'Módulo ${module.id}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: DarkTheme.textPrimary,
+                boxShadow: isActive ? [
+                  BoxShadow(
+                    color: DarkTheme.primaryPurple.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                ),
+                ] : null,
               ),
-              const SizedBox(height: 20),
-              Text(
-                module.title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: DarkTheme.textPrimary,
-                  height: 1.2,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      gradient: DarkTheme.primaryGradient,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DarkTheme.primaryPurple.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      'Módulo ${module.id}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: DarkTheme.textPrimary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    module.title,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: DarkTheme.textPrimary,
+                      height: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    module.description,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: DarkTheme.textSecondary,
+                      height: 1.6,
+                    ),
+                  ),
+                  const Spacer(),
+                  _buildCardFeatures(module),
+                ],
               ),
-              const SizedBox(height: 16),
-              Text(
-                module.description,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: DarkTheme.textSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const Spacer(),
-              _buildCardFeatures(module),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -833,6 +921,170 @@ class InterestCardsView extends StatelessWidget {
               DarkTheme.accentGreen.withOpacity(opacity * 0.7),
               DarkTheme.accentGreenLight.withOpacity(opacity * 0.7),
             ],
+    );
+  }
+
+  Widget _buildDesktopHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '¿Qué funciones te interesan?',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: DarkTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Explora las funcionalidades de nuestro sistema y selecciona las que más se adapten a las necesidades de tu negocio.',
+          style: TextStyle(
+            fontSize: 18,
+            color: DarkTheme.textSecondary,
+            height: 1.6,
+          ),
+        ),
+        const SizedBox(height: 24),
+        _buildProgressIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildDesktopInstructions() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: DarkTheme.backgroundCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DarkTheme.borderLight),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: DarkTheme.primaryPurple,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Icon(
+                      Icons.swipe,
+                      color: DarkTheme.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    'Cómo usar',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildInstructionItem(
+                Icons.arrow_forward,
+                'Arrastra hacia la derecha',
+                'Si la función te interesa',
+                DarkTheme.accentGreen,
+              ),
+              const SizedBox(height: 12),
+              _buildInstructionItem(
+                Icons.arrow_back,
+                'Arrastra hacia la izquierda',
+                'Si no te interesa',
+                DarkTheme.accentRed,
+              ),
+              const SizedBox(height: 12),
+              _buildInstructionItem(
+                Icons.touch_app,
+                'Toca la tarjeta',
+                'Para ver más detalles',
+                DarkTheme.accentAmber,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Obx(() => Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                DarkTheme.accentGreen.withOpacity(0.1),
+                DarkTheme.accentGreen.withOpacity(0.05),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: DarkTheme.accentGreen.withOpacity(0.2)),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: DarkTheme.accentGreen,
+                size: 32,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '${controller.interestedModules.length} Funciones',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: DarkTheme.accentGreen,
+                ),
+              ),
+              const Text(
+                'seleccionadas',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: DarkTheme.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildInstructionItem(IconData icon, String title, String subtitle, Color color) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: DarkTheme.textMuted,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -18,22 +18,101 @@ class CalificationsView extends StatelessWidget {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: _buildCalificationsList(),
-                ),
-                const SizedBox(height: 24),
-                _buildNavigationButtons(),
-                const SizedBox(height: 16),
-              ],
-            ),
+          child: _buildResponsiveLayout(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    
+    if (isDesktop) {
+      return _buildDesktopLayout();
+    } else if (isTablet) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCalificationsList(),
           ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCalificationsList(),
+          ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        padding: const EdgeInsets.all(48.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left side - Header and instructions
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDesktopHeader(),
+                    const SizedBox(height: 32),
+                    _buildDesktopInstructions(),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Califications list
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _buildCalificationsList(),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildNavigationButtons(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -406,6 +485,184 @@ class CalificationsView extends StatelessWidget {
             text: 'Continuar',
             onPressed: () => controller.nextStep(),
             icon: Icons.arrow_forward,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: DarkTheme.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: DarkTheme.glassBorder),
+              ),
+              child: IconButton(
+                onPressed: () => controller.previousStep(),
+                icon: const Icon(Icons.arrow_back_ios),
+                style: IconButton.styleFrom(
+                  foregroundColor: DarkTheme.textSecondary,
+                  padding: const EdgeInsets.all(16),
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            const Expanded(
+              child: Text(
+                'Califica la Importancia',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: DarkTheme.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Evalúa cada aspecto según su importancia para tu negocio. Esta información nos permitirá personalizar mejor nuestra propuesta.',
+          style: TextStyle(
+            fontSize: 18,
+            color: DarkTheme.textSecondary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopInstructions() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DarkTheme.accentAmber.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.accentAmber.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          DarkTheme.accentAmber,
+                          DarkTheme.accentAmber.withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.star_outline,
+                      color: DarkTheme.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Escala de Calificación',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Utiliza la escala del 1 al 5 para calificar cada aspecto:',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: DarkTheme.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: DarkTheme.backgroundCard,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: DarkTheme.borderLight),
+          ),
+          child: Column(
+            children: [
+              _buildRatingLegendItem(5, 'Extremadamente importante', DarkTheme.accentGreen),
+              const SizedBox(height: 8),
+              _buildRatingLegendItem(4, 'Muy importante', DarkTheme.accentAmber),
+              const SizedBox(height: 8),
+              _buildRatingLegendItem(3, 'Moderadamente importante', DarkTheme.primaryPurple),
+              const SizedBox(height: 8),
+              _buildRatingLegendItem(2, 'Poco importante', DarkTheme.textMuted),
+              const SizedBox(height: 8),
+              _buildRatingLegendItem(1, 'No es importante', DarkTheme.accentRed),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRatingLegendItem(int rating, String description, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              rating.toString(),
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: DarkTheme.textPrimary,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              color: color == DarkTheme.textMuted ? DarkTheme.textMuted : DarkTheme.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

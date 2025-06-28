@@ -18,22 +18,101 @@ class CategoriesImportanceView extends StatelessWidget {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: _buildCategoriesList(),
-                ),
-                const SizedBox(height: 24),
-                _buildNavigationButtons(),
-                const SizedBox(height: 16),
-              ],
-            ),
+          child: _buildResponsiveLayout(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    
+    if (isDesktop) {
+      return _buildDesktopLayout();
+    } else if (isTablet) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCategoriesList(),
           ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildCategoriesList(),
+          ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        padding: const EdgeInsets.all(48.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left side - Header and instructions
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDesktopHeader(),
+                    const SizedBox(height: 32),
+                    _buildDesktopInstructions(),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Categories list
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _buildCategoriesList(),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildNavigationButtons(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -136,6 +215,184 @@ class CategoriesImportanceView extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: DarkTheme.backgroundCard,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: DarkTheme.glassBorder),
+              ),
+              child: IconButton(
+                onPressed: () => controller.previousStep(),
+                icon: const Icon(Icons.arrow_back_ios),
+                style: IconButton.styleFrom(
+                  foregroundColor: DarkTheme.textSecondary,
+                  padding: const EdgeInsets.all(16),
+                ),
+              ),
+            ),
+            const SizedBox(width: 20),
+            const Expanded(
+              child: Text(
+                'Importancia por Categoría',
+                style: TextStyle(
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold,
+                  color: DarkTheme.textPrimary,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Ajusta el nivel de importancia de cada categoría tecnológica para tu negocio. Esta información nos ayudará a enfocar nuestra propuesta.',
+          style: TextStyle(
+            fontSize: 18,
+            color: DarkTheme.textSecondary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopInstructions() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DarkTheme.accentCyan.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.accentCyan.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          DarkTheme.accentCyan,
+                          DarkTheme.accentCyan.withOpacity(0.8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.tune,
+                      color: DarkTheme.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Cómo usar los controles',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Usa el deslizador para establecer el nivel de importancia de cada categoría (0-10). Mayor valor significa mayor importancia.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: DarkTheme.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: DarkTheme.backgroundCard,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: DarkTheme.borderLight),
+          ),
+          child: Column(
+            children: [
+              _buildImportanceLegendItem(9, 10, 'Crítico', DarkTheme.accentRed),
+              const SizedBox(height: 8),
+              _buildImportanceLegendItem(7, 8, 'Muy importante', DarkTheme.accentAmber),
+              const SizedBox(height: 8),
+              _buildImportanceLegendItem(5, 6, 'Importante', DarkTheme.accentGreen),
+              const SizedBox(height: 8),
+              _buildImportanceLegendItem(3, 4, 'Moderadamente importante', DarkTheme.primaryPurple),
+              const SizedBox(height: 8),
+              _buildImportanceLegendItem(0, 2, 'Poco importante', DarkTheme.textMuted),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImportanceLegendItem(int minValue, int maxValue, String description, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Center(
+            child: Text(
+              minValue == maxValue ? minValue.toString() : '$minValue-$maxValue',
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: DarkTheme.textPrimary,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            description,
+            style: TextStyle(
+              fontSize: 14,
+              color: color == DarkTheme.textMuted ? DarkTheme.textMuted : DarkTheme.textPrimary,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
       ],

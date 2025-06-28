@@ -24,22 +24,101 @@ class _UserDataFormViewState extends State<UserDataFormView> {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: _buildForm(),
-                ),
-                const SizedBox(height: 24),
-                _buildNavigationButtons(),
-                const SizedBox(height: 16),
-              ],
-            ),
+          child: _buildResponsiveLayout(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    
+    if (isDesktop) {
+      return _buildDesktopLayout();
+    } else if (isTablet) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildForm(),
           ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: _buildForm(),
+          ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        padding: const EdgeInsets.all(48.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left side - Header and info
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDesktopHeader(),
+                    const SizedBox(height: 32),
+                    _buildDesktopSideInfo(),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Form
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _buildDesktopForm(),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildNavigationButtons(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -130,6 +209,9 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   }
 
   Widget _buildPersonalInfoSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    
     return Card(
       elevation: 2,
       shadowColor: DarkTheme.shadowMedium,
@@ -137,7 +219,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(isDesktop ? 20 : 24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: DarkTheme.backgroundCard,
@@ -171,7 +253,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             _buildTextFormField(
               label: 'Nombre completo *',
               hint: 'Ej: Juan Pérez García',
@@ -184,7 +266,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildTextFormField(
               label: 'Teléfono *',
               hint: 'Ej: +52 55 1234 5678',
@@ -198,7 +280,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildTextFormField(
               label: 'Correo electrónico *',
               hint: 'Ej: juan@mirestaurante.com',
@@ -222,6 +304,9 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   }
 
   Widget _buildBusinessInfoSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    
     return Card(
       elevation: 2,
       shadowColor: DarkTheme.shadowMedium,
@@ -229,7 +314,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Container(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(isDesktop ? 20 : 24),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: DarkTheme.backgroundCard,
@@ -263,7 +348,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
             _buildTextFormField(
               label: 'Nombre del negocio *',
               hint: 'Ej: Restaurante La Delicia',
@@ -276,7 +361,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 return null;
               },
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildDropdownField(
               label: 'Tu cargo en el negocio *',
               hint: 'Selecciona tu rol',
@@ -508,6 +593,35 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   }
 
   Widget _buildNavigationButtons() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    
+    if (isDesktop) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(
+            width: 200,
+            child: CustomButton(
+              text: 'Anterior',
+              onPressed: () => controller.previousStep(),
+              isSecondary: true,
+              icon: Icons.arrow_back,
+            ),
+          ),
+          SizedBox(
+            width: 250,
+            child: Obx(() => CustomButton(
+              text: 'Enviar Evaluación',
+              onPressed: _canSubmit() ? _submitForm : null,
+              isEnabled: _canSubmit(),
+              icon: Icons.send,
+            )),
+          ),
+        ],
+      );
+    }
+    
     return Row(
       children: [
         Expanded(
@@ -546,12 +660,18 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   }
 
   void _showSubmissionDialog() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         child: Container(
+          constraints: BoxConstraints(
+            maxWidth: isDesktop ? 500 : double.infinity,
+          ),
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -634,6 +754,149 @@ class _UserDataFormViewState extends State<UserDataFormView> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        IconButton(
+          onPressed: () => controller.previousStep(),
+          icon: const Icon(Icons.arrow_back_ios),
+          style: IconButton.styleFrom(
+            backgroundColor: DarkTheme.backgroundCard,
+            foregroundColor: DarkTheme.textSecondary,
+            padding: const EdgeInsets.all(16),
+          ),
+        ),
+        const SizedBox(height: 24),
+        const Text(
+          'Información de Contacto',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: DarkTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Para finalizar, compártenos tus datos de contacto. Te enviaremos una propuesta personalizada basada en tus respuestas.',
+          style: TextStyle(
+            fontSize: 18,
+            color: Color(0xFF6B7280),
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopSideInfo() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF10B981).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFF10B981).withOpacity(0.2)),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.security,
+                    color: Color(0xFF10B981),
+                    size: 24,
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    'Datos Seguros',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF10B981),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Tus datos están seguros y solo se usarán para contactarte con una propuesta personalizada.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF10B981),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: DarkTheme.backgroundCard,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DarkTheme.borderLight),
+          ),
+          child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.schedule,
+                    color: DarkTheme.primaryPurple,
+                    size: 24,
+                  ),
+                  SizedBox(width: 16),
+                  Text(
+                    'Respuesta Rápida',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12),
+              Text(
+                'Nuestro equipo te contactará en menos de 24 horas con una propuesta adaptada a tu negocio.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: DarkTheme.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopForm() {
+    return Form(
+      key: _formKey,
+      child: ListView(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildPersonalInfoSection()),
+              const SizedBox(width: 24),
+              Expanded(child: _buildBusinessInfoSection()),
+            ],
+          ),
+          const SizedBox(height: 32),
+          _buildAdditionalInfoSection(),
+        ],
       ),
     );
   }

@@ -18,22 +18,101 @@ class PriorityOrderingView extends StatelessWidget {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: Obx(() => _buildPriorityList()),
-                ),
-                const SizedBox(height: 24),
-                _buildNavigationButtons(),
-                const SizedBox(height: 16),
-              ],
-            ),
+          child: _buildResponsiveLayout(context),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveLayout(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth > 1024;
+    final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    
+    if (isDesktop) {
+      return _buildDesktopLayout();
+    } else if (isTablet) {
+      return _buildTabletLayout();
+    } else {
+      return _buildMobileLayout();
+    }
+  }
+
+  Widget _buildMobileLayout() {
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: Obx(() => _buildPriorityList()),
           ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          const SizedBox(height: 32),
+          Expanded(
+            child: Obx(() => _buildPriorityList()),
+          ),
+          const SizedBox(height: 24),
+          _buildNavigationButtons(),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        padding: const EdgeInsets.all(48.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Left side - Header and instructions
+            Expanded(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 48.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDesktopHeader(),
+                    const SizedBox(height: 32),
+                    _buildDesktopInstructions(),
+                  ],
+                ),
+              ),
+            ),
+            // Right side - Priority list
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Obx(() => _buildPriorityList()),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildNavigationButtons(),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -346,6 +425,196 @@ class PriorityOrderingView extends StatelessWidget {
             isEnabled: controller.priorityModules.isNotEmpty,
             icon: Icons.arrow_forward,
           )),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Ordena por Prioridad',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: DarkTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'Organiza los módulos según su importancia para tu negocio. Esta información nos ayudará a personalizar mejor nuestra propuesta.',
+          style: TextStyle(
+            fontSize: 18,
+            color: DarkTheme.textSecondary,
+            height: 1.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopInstructions() {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                DarkTheme.backgroundCard,
+                DarkTheme.backgroundCardElevated,
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: DarkTheme.primaryPurple.withOpacity(0.3)),
+            boxShadow: [
+              BoxShadow(
+                color: DarkTheme.primaryPurple.withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: DarkTheme.primaryGradient,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.info_outline,
+                      color: DarkTheme.textPrimary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Instrucciones',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Arrastra y suelta los elementos para reordenarlos. El primer elemento será tu máxima prioridad.',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: DarkTheme.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: DarkTheme.backgroundCard,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: DarkTheme.borderLight),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFEF4444),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Máxima Prioridad',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: DarkTheme.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF97316),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Alta Prioridad',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: DarkTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFF59E0B),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Prioridad Media',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: DarkTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: const BoxDecoration(
+                      color: Color(0xFF6366F1),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'Prioridad Estándar',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: DarkTheme.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ],
     );
