@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/questionnaire/welcome_screen_view.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 
 class FinishScreenView extends StatelessWidget {
@@ -192,6 +193,19 @@ class FinishScreenView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
+        // Secondary action - Go to interest cards
+        SizedBox(
+          width: double.infinity,
+          child: CustomButton(
+            text: 'Ver Módulos del Sistema',
+            icon: Icons.apps_rounded,
+            isSecondary: true,
+            onPressed: () {
+              _goToInterestCards();
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
         // Tertiary action - Contact info (if needed)
         SizedBox(
           width: double.infinity,
@@ -213,8 +227,8 @@ class FinishScreenView extends StatelessWidget {
     final controller = Get.find<QuestionnaireController>();
     controller.resetAll();
     
-    // Navigate to the main questionnaire view
-    Get.offAll(() => QuestionnaireMainView());
+    // Navigate to the welcome screen for a fresh start
+    Get.offAll(() => const WelcomeScreenView());
   }
 
   void _goToInterestCards() {
@@ -288,36 +302,59 @@ class FinishScreenView extends StatelessWidget {
     required String title,
     required String value,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: DarkTheme.backgroundPrimary.withOpacity(0.3),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: DarkTheme.borderLight.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: DarkTheme.textSecondary,
+          // Fixed width container for icon to ensure consistent alignment
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: DarkTheme.primaryPurple.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              size: 20,
+              color: DarkTheme.primaryPurple,
+            ),
           ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: DarkTheme.textSecondary,
-                  fontWeight: FontWeight.w500,
+          const SizedBox(width: 16),
+          // Expanded to take remaining space and ensure consistent layout
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: DarkTheme.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: DarkTheme.textPrimary,
-                  fontWeight: FontWeight.w600,
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: DarkTheme.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/questionnaire/welcome_screen_view.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 
 void main() async {
@@ -51,7 +51,7 @@ class MainApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
         fontFamily: 'System',
       ),
-      home: QuestionnaireMainView(),
+      home: const WelcomeScreenView(),
       debugShowCheckedModeBanner: false,
     );
   }
