@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
 class CalificationsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -44,6 +45,7 @@ class CalificationsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const MobileProgressHeader(),
           _buildHeader(),
           const SizedBox(height: 32),
           Expanded(
@@ -307,9 +309,9 @@ class CalificationsView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              Obx(() => _buildStarRating(calification.id)),
+              _buildStarRating(calification.id),
               const SizedBox(height: 8),
-              Obx(() => _buildRatingLabel(calification.id)),
+              _buildRatingLabel(calification.id),
             ],
           ),
         ),
@@ -356,82 +358,86 @@ class CalificationsView extends StatelessWidget {
   }
 
   Widget _buildStarRating(String calificationId) {
-    final currentRating = controller.userCalifications[calificationId] ?? 3;
-    
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(5, (index) {
-        final starValue = index + 1;
-        return GestureDetector(
-          onTap: () => controller.updateCalification(calificationId, starValue),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              child: Container(
-                decoration: starValue <= currentRating ? BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: DarkTheme.accentAmber.withOpacity(0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ) : null,
-                child: Icon(
-                  starValue <= currentRating ? Icons.star_rounded : Icons.star_border_rounded,
-                  color: starValue <= currentRating 
-                      ? DarkTheme.accentAmber
-                      : DarkTheme.borderMedium,
-                  size: 36,
+    return Obx(() {
+      final currentRating = controller.userCalifications[calificationId] ?? 3;
+      
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(5, (index) {
+          final starValue = index + 1;
+          return GestureDetector(
+            onTap: () => controller.updateCalification(calificationId, starValue),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  decoration: starValue <= currentRating ? BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DarkTheme.accentAmber.withOpacity(0.4),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ) : null,
+                  child: Icon(
+                    starValue <= currentRating ? Icons.star_rounded : Icons.star_border_rounded,
+                    color: starValue <= currentRating 
+                        ? DarkTheme.accentAmber
+                        : DarkTheme.borderMedium,
+                    size: 36,
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }),
-    );
+          );
+        }),
+      );
+    });
   }
 
   Widget _buildRatingLabel(String calificationId) {
-    final currentRating = controller.userCalifications[calificationId] ?? 3;
-    String label = _getRatingLabel(currentRating);
-    
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              _getRatingColor(currentRating).withOpacity(0.2),
-              _getRatingColor(currentRating).withOpacity(0.1),
+    return Obx(() {
+      final currentRating = controller.userCalifications[calificationId] ?? 3;
+      String label = _getRatingLabel(currentRating);
+      
+      return Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                _getRatingColor(currentRating).withOpacity(0.2),
+                _getRatingColor(currentRating).withOpacity(0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _getRatingColor(currentRating).withOpacity(0.4),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _getRatingColor(currentRating).withOpacity(0.2),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: _getRatingColor(currentRating).withOpacity(0.4),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: _getRatingColor(currentRating).withOpacity(0.2),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: _getRatingColor(currentRating),
             ),
-          ],
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: _getRatingColor(currentRating),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   String _getRatingLabel(int rating) {

@@ -6,3 +6,4 @@ export 'questionnaire/califications_view.dart';
 export 'questionnaire/categories_importance_view.dart';
 export 'questionnaire/user_data_form_view.dart';
 export 'questionnaire/finish_screen_view.dart';
+export 'questionnaire/circular_progress_widget.dart';

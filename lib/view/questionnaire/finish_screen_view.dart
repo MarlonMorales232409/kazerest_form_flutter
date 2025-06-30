@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
 import 'package:kazerest_form/view/questionnaire/welcome_screen_view.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
+import 'package:kazerest_form/view/widgets/custom_button.dart' as widgets;
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 
 class FinishScreenView extends StatelessWidget {
@@ -16,7 +17,12 @@ class FinishScreenView extends StatelessWidget {
           gradient: DarkTheme.backgroundGradient,
         ),
         child: SafeArea(
-          child: _buildResponsiveLayout(context),
+          child: Stack(
+            children: [
+              _buildResponsiveLayout(context),
+              const PositionedCircularProgress(showOnFinishScreen: true),
+            ],
+          ),
         ),
       ),
     );
@@ -41,6 +47,7 @@ class FinishScreenView extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
+          const MobileProgressHeader(showOnFinishScreen: true),
           Expanded(
             child: _buildContent(),
           ),
@@ -184,7 +191,7 @@ class FinishScreenView extends StatelessWidget {
         // Primary action - Start new evaluation
         SizedBox(
           width: double.infinity,
-          child: CustomButton(
+          child: widgets.CustomButton(
             text: 'Realizar Nueva Evaluación',
             icon: Icons.refresh_rounded,
             onPressed: () {
@@ -193,23 +200,10 @@ class FinishScreenView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        // Secondary action - Go to interest cards
+        // Contact info
         SizedBox(
           width: double.infinity,
-          child: CustomButton(
-            text: 'Ver Módulos del Sistema',
-            icon: Icons.apps_rounded,
-            isSecondary: true,
-            onPressed: () {
-              _goToInterestCards();
-            },
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Tertiary action - Contact info (if needed)
-        SizedBox(
-          width: double.infinity,
-          child: CustomButton(
+          child: widgets.CustomButton(
             text: 'Información de Contacto',
             icon: Icons.contact_support_rounded,
             isSecondary: true,
@@ -223,21 +217,19 @@ class FinishScreenView extends StatelessWidget {
   }
 
   void _startNewEvaluation() {
-    // Reset all controller data and start from beginning
-    final controller = Get.find<QuestionnaireController>();
-    controller.resetAll();
+    // Reset all controller data and start from beginning if controller exists
+    try {
+      if (Get.isRegistered<QuestionnaireController>()) {
+        final controller = Get.find<QuestionnaireController>();
+        controller.resetAll();
+      }
+    } catch (e) {
+      // If controller doesn't exist, just continue - it will be created fresh
+      print('Controller not found, will be created fresh: $e');
+    }
     
     // Navigate to the welcome screen for a fresh start
     Get.offAll(() => const WelcomeScreenView());
-  }
-
-  void _goToInterestCards() {
-    // Go back to interest cards view (step 0)
-    final controller = Get.find<QuestionnaireController>();
-    controller.goToStep(0);
-    
-    // Navigate to the main questionnaire view
-    Get.offAll(() => QuestionnaireMainView());
   }
 
   void _showContactInfo() {
@@ -285,7 +277,7 @@ class FinishScreenView extends StatelessWidget {
               const SizedBox(height: 24),
               SizedBox(
                 width: double.infinity,
-                child: CustomButton(
+                child: widgets.CustomButton(
                   text: 'Cerrar',
                   onPressed: () => Get.back(),
                 ),

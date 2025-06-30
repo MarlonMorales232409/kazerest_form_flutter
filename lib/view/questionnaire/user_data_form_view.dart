@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
 import 'package:kazerest_form/view/questionnaire/finish_screen_view.dart';
+import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/firebase_service.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
 class UserDataFormView extends StatefulWidget {
   const UserDataFormView({super.key});
@@ -51,6 +52,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const MobileProgressHeader(),
           _buildHeader(),
           const SizedBox(height: 32),
           Expanded(
