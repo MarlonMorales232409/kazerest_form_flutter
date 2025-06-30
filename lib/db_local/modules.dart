@@ -43,7 +43,7 @@ const List<SystemModule> systemModules = [
   ),
   SystemModule(
     id: "9",
-    title: "IA y Automatización",
+    title: "Inteligencia Artificial",
     description: "Recomendaciones automáticas y predicciones de demanda.",
   ),
   SystemModule(

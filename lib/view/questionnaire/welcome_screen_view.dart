@@ -206,7 +206,7 @@ class WelcomeScreenView extends StatelessWidget {
       child: const Text(
         'Te invitamos a participar en una breve encuesta sobre las necesidades de software para tu restaurante.\n\nEsta evaluación nos ayudará a entender mejor cómo podemos optimizar las operaciones de tu negocio y mejorar la experiencia de tus clientes.',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 20,
           color: DarkTheme.textSecondary,
           height: 1.7,
           fontWeight: FontWeight.w400,
@@ -256,7 +256,7 @@ class WelcomeScreenView extends StatelessWidget {
                 child: Text(
                   feature['text'] as String,
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     color: DarkTheme.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),

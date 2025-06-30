@@ -143,7 +143,7 @@ class CategoriesImportanceView extends StatelessWidget {
             const SizedBox(width: 16),
             const Expanded(
               child: Text(
-                'Importancia por Categoría',
+                'Ventajas Tecnológicas',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -155,9 +155,9 @@ class CategoriesImportanceView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         const Text(
-          'Ajusta el nivel de importancia de cada categoría tecnológica para tu negocio. Usa el deslizador de 0 a 10.',
+          'Evalúa qué beneficios tecnológicos son más importantes para tu negocio. Usa el deslizador de 0 a 10.',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             color: DarkTheme.textSecondary,
             height: 1.5,
           ),
@@ -247,7 +247,7 @@ class CategoriesImportanceView extends StatelessWidget {
             const SizedBox(width: 20),
             const Expanded(
               child: Text(
-                'Importancia por Categoría',
+                'Ventajas Tecnológicas',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,

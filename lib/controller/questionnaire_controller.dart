@@ -315,6 +315,7 @@ class QuestionnaireController extends GetxController {
       case 4:
         return userName.value.isNotEmpty && 
                userEmail.value.isNotEmpty && 
+               userPhone.value.isNotEmpty &&
                businessName.value.isNotEmpty;
       default:
         return false;
