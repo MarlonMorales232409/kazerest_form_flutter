@@ -159,21 +159,25 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
             : _persistentProgress.clamp(0.0, 1.0);
         
         return Transform.scale(
-          scale: _pulseAnimation.value,
+          scale: _pulseAnimation.value * (currentDisplayProgress >= 1.0 ? 1.02 : 1.0), // Subtle pulse when complete
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(widget.size / 2),
               boxShadow: [
-                // Outer glow effect
+                // Outer glow effect - stronger when complete
                 BoxShadow(
-                  color: DarkTheme.primaryPurple.withOpacity(_glowAnimation.value * 0.6),
-                  blurRadius: 25,
-                  spreadRadius: 3,
+                  color: currentDisplayProgress >= 1.0
+                      ? DarkTheme.accentGreen.withOpacity(_glowAnimation.value * 0.8)
+                      : DarkTheme.primaryPurple.withOpacity(_glowAnimation.value * 0.6),
+                  blurRadius: currentDisplayProgress >= 1.0 ? 30 : 25,
+                  spreadRadius: currentDisplayProgress >= 1.0 ? 5 : 3,
                   offset: const Offset(0, 0),
                 ),
                 // Inner shadow for depth
                 BoxShadow(
-                  color: DarkTheme.primaryPurple.withOpacity(0.2),
+                  color: currentDisplayProgress >= 1.0
+                      ? DarkTheme.accentGreen.withOpacity(0.3)
+                      : DarkTheme.primaryPurple.withOpacity(0.2),
                   blurRadius: 10,
                   offset: const Offset(0, 3),
                 ),
@@ -185,16 +189,23 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
               animation: false, // Disable built-in animation
               percent: currentDisplayProgress, // Use our tracked progress
               center: _buildCenterContent(currentStep, totalSteps),
-              circularStrokeCap: CircularStrokeCap.round,
+              circularStrokeCap: currentDisplayProgress >= 1.0 
+                  ? CircularStrokeCap.butt // Use butt cap when complete for proper closure
+                  : CircularStrokeCap.round, // Use round cap during progress
               backgroundColor: DarkTheme.backgroundCard.withOpacity(0.3),
               backgroundWidth: 5.0,
               // Enhanced gradient based on progress
-              linearGradient: LinearGradient(
-                colors: _getGradientColors(currentDisplayProgress),
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              rotateLinearGradient: true,
+              linearGradient: currentDisplayProgress >= 1.0
+                  ? null // No gradient when complete, use solid color
+                  : LinearGradient(
+                      colors: _getGradientColors(currentDisplayProgress),
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+              progressColor: currentDisplayProgress >= 1.0 
+                  ? DarkTheme.accentGreen // Solid green when complete
+                  : null, // Use gradient when not complete
+              rotateLinearGradient: currentDisplayProgress < 1.0,
             ),
           ),
         );
@@ -204,18 +215,30 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
 
   List<Color> _getGradientColors(double progress) {
     if (widget.showOnFinishScreen || progress >= 1.0) {
+      // When completed, use solid green colors for a complete circle
       return [
         DarkTheme.accentGreen,
-        DarkTheme.accentGreen.withOpacity(0.8),
-        DarkTheme.primaryPurple.withOpacity(0.3),
+        DarkTheme.accentGreen,
+        DarkTheme.accentGreen.withOpacity(0.9),
       ];
-    } else if (progress >= 0.8) {
-      final greenRatio = (progress - 0.8) * 5; // 0.0 to 1.0
-      return [
-        Color.lerp(DarkTheme.primaryPurple, DarkTheme.accentGreen, greenRatio)!,
-        DarkTheme.primaryPurple.withOpacity(0.8),
-        DarkTheme.primaryPurple.withOpacity(0.4),
-      ];
+    } else if (progress >= 0.7) {
+      // Start the green transition earlier and make it more gradual
+      final greenRatio = (progress - 0.7) / 0.3; // More gradual from 0.7 to 1.0
+      final smoothRatio = _smoothStep(greenRatio); // Apply smooth interpolation
+      
+      final primaryColor = Color.lerp(DarkTheme.primaryPurple, DarkTheme.accentGreen, smoothRatio)!;
+      final secondaryColor = Color.lerp(
+        DarkTheme.primaryPurple.withOpacity(0.8), 
+        DarkTheme.accentGreen.withOpacity(0.8), 
+        smoothRatio
+      )!;
+      final tertiaryColor = Color.lerp(
+        DarkTheme.primaryPurple.withOpacity(0.4), 
+        DarkTheme.accentGreen.withOpacity(0.6), 
+        smoothRatio
+      )!;
+      
+      return [primaryColor, secondaryColor, tertiaryColor];
     } else {
       return [
         DarkTheme.primaryPurple,
@@ -223,6 +246,12 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
         DarkTheme.primaryPurple.withOpacity(0.4),
       ];
     }
+  }
+  
+  // Smooth step function for more natural color transitions
+  double _smoothStep(double t) {
+    t = t.clamp(0.0, 1.0);
+    return t * t * (3.0 - 2.0 * t); // Hermite interpolation
   }
 
   Widget _buildCenterContent(int currentStep, int totalSteps) {
