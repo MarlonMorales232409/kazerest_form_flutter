@@ -1,7 +1,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kazerest_form/model/category_importance.dart';
-import 'package:kazerest_form/model/system_module.dart';
 import 'package:kazerest_form/model/user_interest.dart';
 
 part 'user_answer.freezed.dart';
@@ -10,8 +9,8 @@ part 'user_answer.g.dart';
 @freezed
 abstract class UserAnswer with _$UserAnswer {
   const factory UserAnswer({
-    required List<SystemModule> interestedModules,
-    required Map<String, SystemModule> priorityModules,
+    required List<Map<String, dynamic>> interestedModules,
+    required Map<String, Map<String, dynamic>> priorityModules,
     required List<UserInterest> userInterests,
     required List<CategoryImportance> categoryImportance,
     String? comments,

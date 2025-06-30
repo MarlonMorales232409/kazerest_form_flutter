@@ -230,13 +230,20 @@ class QuestionnaireController extends GetxController {
   
   // Navigation Methods
   void goToStep(int step) {
-    if (step == 1) {
-      // Prepare priority modules from interested modules
-      priorityModules.clear();
-      priorityModules.addAll(interestedModules);
-      priorityModules.refresh();
+    if (step >= 0 && step <= 4) {
+      if (step == 1) {
+        // Prepare priority modules from interested modules
+        priorityModules.clear();
+        priorityModules.addAll(interestedModules);
+        priorityModules.refresh();
+      }
+      currentStep.value = step;
     }
-    currentStep.value = step;
+  }
+
+  // Get total steps for progress indicator
+  int getTotalSteps() {
+    return 5; // Steps 0-4
   }
   
   void nextStep() {
@@ -260,9 +267,13 @@ class QuestionnaireController extends GetxController {
   
   // Final submission
   UserAnswer buildUserAnswer() {
-    final priorityMap = <String, SystemModule>{};
+    final priorityMap = <String, Map<String, dynamic>>{};
     for (int i = 0; i < priorityModules.length; i++) {
-      priorityMap[(i + 1).toString()] = priorityModules[i];
+      priorityMap[(i + 1).toString()] = {
+        'id': priorityModules[i].id,
+        'title': priorityModules[i].title,
+        'description': priorityModules[i].description,
+      };
     }
     
     final userInterests = userCalifications.entries.map((entry) {
@@ -274,8 +285,15 @@ class QuestionnaireController extends GetxController {
       );
     }).toList();
     
+    // Convert interested modules to serializable format
+    final interestedModulesData = interestedModules.map((module) => {
+      'id': module.id,
+      'title': module.title,
+      'description': module.description,
+    }).toList();
+    
     return UserAnswer(
-      interestedModules: interestedModules,
+      interestedModules: interestedModulesData,
       priorityModules: priorityMap,
       userInterests: userInterests,
       categoryImportance: categoryImportances,
@@ -286,9 +304,10 @@ class QuestionnaireController extends GetxController {
   bool canProceedFromStep(int step) {
     switch (step) {
       case 0:
-        return currentCardIndex.value >= systemModules.length;
+        // Users can proceed if they've gone through all cards OR have at least one interested module
+        return currentCardIndex.value >= systemModules.length || interestedModules.isNotEmpty;
       case 1:
-        return interestedModules.isNotEmpty;
+        return priorityModules.isNotEmpty; // Changed from interestedModules to priorityModules
       case 2:
         return userCalifications.isNotEmpty;
       case 3:

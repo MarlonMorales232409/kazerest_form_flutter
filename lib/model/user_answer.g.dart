@@ -9,10 +9,10 @@ part of 'user_answer.dart';
 _$UserAnswerImpl _$$UserAnswerImplFromJson(Map<String, dynamic> json) =>
     _$UserAnswerImpl(
       interestedModules: (json['interestedModules'] as List<dynamic>)
-          .map((e) => SystemModule.fromJson(e as Map<String, dynamic>))
+          .map((e) => e as Map<String, dynamic>)
           .toList(),
       priorityModules: (json['priorityModules'] as Map<String, dynamic>).map(
-        (k, e) => MapEntry(k, SystemModule.fromJson(e as Map<String, dynamic>)),
+        (k, e) => MapEntry(k, e as Map<String, dynamic>),
       ),
       userInterests: (json['userInterests'] as List<dynamic>)
           .map((e) => UserInterest.fromJson(e as Map<String, dynamic>))

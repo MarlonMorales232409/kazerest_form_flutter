@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/model/model.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 
 class PriorityOrderingView extends StatelessWidget {
@@ -385,18 +385,19 @@ class PriorityOrderingView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Primero selecciona algunos módulos que te interesen',
+          Text(
+            'Primero debes seleccionar al menos un módulo que te interese.\nTotal de módulos interesados: ${controller.interestedModules.length}',
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               color: DarkTheme.textMuted,
             ),
           ),
           const SizedBox(height: 24),
           CustomButton(
-            text: 'Volver a Selección',
-            onPressed: () => controller.previousStep(),
+            text: 'Volver a Selección de Módulos',
+            icon: Icons.arrow_back_rounded,
+            onPressed: () => controller.goToStep(0),
             isSecondary: true,
           ),
         ],

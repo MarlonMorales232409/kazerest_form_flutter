@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
-import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 
 class CategoriesImportanceView extends StatelessWidget {
@@ -478,7 +478,7 @@ class CategoriesImportanceView extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                _buildImportanceSlider(category.id, categoryImportance.value),
+                _buildImportanceSlider(category.id),
                 const SizedBox(height: 12),
                 _buildImportanceLabel(categoryImportance.value),
               ],
@@ -546,73 +546,79 @@ class CategoriesImportanceView extends StatelessWidget {
     }
   }
 
-  Widget _buildImportanceSlider(String categoryId, int currentValue) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              '0',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: DarkTheme.textMuted,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: _getSliderColor(currentValue).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: _getSliderColor(currentValue).withOpacity(0.3),
-                ),
-              ),
-              child: Text(
-                '$currentValue',
+  Widget _buildImportanceSlider(String categoryId) {
+    return Obx(() {
+      final categoryImportance = controller.categoryImportances
+          .firstWhere((ci) => ci.id == categoryId);
+      final currentValue = categoryImportance.value;
+      
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                '0',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: _getSliderColor(currentValue),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: DarkTheme.textMuted,
                 ),
               ),
-            ),
-            const Text(
-              '10',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: DarkTheme.textMuted,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _getSliderColor(currentValue).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: _getSliderColor(currentValue).withOpacity(0.3),
+                  ),
+                ),
+                child: Text(
+                  '$currentValue',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: _getSliderColor(currentValue),
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Builder(
-          builder: (context) => SliderTheme(
-            data: SliderTheme.of(context).copyWith(
-              trackHeight: 6,
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
-              overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
-              activeTrackColor: _getSliderColor(currentValue),
-              inactiveTrackColor: DarkTheme.borderLight,
-              thumbColor: _getSliderColor(currentValue),
-              overlayColor: _getSliderColor(currentValue).withOpacity(0.2),
-            ),
-            child: Slider(
-              value: currentValue.toDouble(),
-              min: 0,
-              max: 10,
-              divisions: 10,
-              onChanged: (value) {
-                controller.updateCategoryImportance(categoryId, value);
-              },
+              const Text(
+                '10',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: DarkTheme.textMuted,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Builder(
+            builder: (context) => SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                trackHeight: 6,
+                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 12),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+                activeTrackColor: _getSliderColor(currentValue),
+                inactiveTrackColor: DarkTheme.borderLight,
+                thumbColor: _getSliderColor(currentValue),
+                overlayColor: _getSliderColor(currentValue).withOpacity(0.2),
+              ),
+              child: Slider(
+                value: currentValue.toDouble(),
+                min: 0,
+                max: 10,
+                divisions: 10,
+                onChanged: (value) {
+                  controller.updateCategoryImportance(categoryId, value);
+                },
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 
   Color _getSliderColor(int value) {

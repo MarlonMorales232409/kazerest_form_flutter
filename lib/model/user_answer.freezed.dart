@@ -21,9 +21,9 @@ UserAnswer _$UserAnswerFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserAnswer {
-  List<SystemModule> get interestedModules =>
+  List<Map<String, dynamic>> get interestedModules =>
       throw _privateConstructorUsedError;
-  Map<String, SystemModule> get priorityModules =>
+  Map<String, Map<String, dynamic>> get priorityModules =>
       throw _privateConstructorUsedError;
   List<UserInterest> get userInterests => throw _privateConstructorUsedError;
   List<CategoryImportance> get categoryImportance =>
@@ -48,8 +48,8 @@ abstract class $UserAnswerCopyWith<$Res> {
   ) = _$UserAnswerCopyWithImpl<$Res, UserAnswer>;
   @useResult
   $Res call({
-    List<SystemModule> interestedModules,
-    Map<String, SystemModule> priorityModules,
+    List<Map<String, dynamic>> interestedModules,
+    Map<String, Map<String, dynamic>> priorityModules,
     List<UserInterest> userInterests,
     List<CategoryImportance> categoryImportance,
     String? comments,
@@ -82,11 +82,11 @@ class _$UserAnswerCopyWithImpl<$Res, $Val extends UserAnswer>
             interestedModules: null == interestedModules
                 ? _value.interestedModules
                 : interestedModules // ignore: cast_nullable_to_non_nullable
-                      as List<SystemModule>,
+                      as List<Map<String, dynamic>>,
             priorityModules: null == priorityModules
                 ? _value.priorityModules
                 : priorityModules // ignore: cast_nullable_to_non_nullable
-                      as Map<String, SystemModule>,
+                      as Map<String, Map<String, dynamic>>,
             userInterests: null == userInterests
                 ? _value.userInterests
                 : userInterests // ignore: cast_nullable_to_non_nullable
@@ -115,8 +115,8 @@ abstract class _$$UserAnswerImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    List<SystemModule> interestedModules,
-    Map<String, SystemModule> priorityModules,
+    List<Map<String, dynamic>> interestedModules,
+    Map<String, Map<String, dynamic>> priorityModules,
     List<UserInterest> userInterests,
     List<CategoryImportance> categoryImportance,
     String? comments,
@@ -148,11 +148,11 @@ class __$$UserAnswerImplCopyWithImpl<$Res>
         interestedModules: null == interestedModules
             ? _value._interestedModules
             : interestedModules // ignore: cast_nullable_to_non_nullable
-                  as List<SystemModule>,
+                  as List<Map<String, dynamic>>,
         priorityModules: null == priorityModules
             ? _value._priorityModules
             : priorityModules // ignore: cast_nullable_to_non_nullable
-                  as Map<String, SystemModule>,
+                  as Map<String, Map<String, dynamic>>,
         userInterests: null == userInterests
             ? _value._userInterests
             : userInterests // ignore: cast_nullable_to_non_nullable
@@ -174,8 +174,8 @@ class __$$UserAnswerImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserAnswerImpl implements _UserAnswer {
   const _$UserAnswerImpl({
-    required final List<SystemModule> interestedModules,
-    required final Map<String, SystemModule> priorityModules,
+    required final List<Map<String, dynamic>> interestedModules,
+    required final Map<String, Map<String, dynamic>> priorityModules,
     required final List<UserInterest> userInterests,
     required final List<CategoryImportance> categoryImportance,
     this.comments,
@@ -187,18 +187,18 @@ class _$UserAnswerImpl implements _UserAnswer {
   factory _$UserAnswerImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserAnswerImplFromJson(json);
 
-  final List<SystemModule> _interestedModules;
+  final List<Map<String, dynamic>> _interestedModules;
   @override
-  List<SystemModule> get interestedModules {
+  List<Map<String, dynamic>> get interestedModules {
     if (_interestedModules is EqualUnmodifiableListView)
       return _interestedModules;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_interestedModules);
   }
 
-  final Map<String, SystemModule> _priorityModules;
+  final Map<String, Map<String, dynamic>> _priorityModules;
   @override
-  Map<String, SystemModule> get priorityModules {
+  Map<String, Map<String, dynamic>> get priorityModules {
     if (_priorityModules is EqualUnmodifiableMapView) return _priorityModules;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableMapView(_priorityModules);
@@ -281,8 +281,8 @@ class _$UserAnswerImpl implements _UserAnswer {
 
 abstract class _UserAnswer implements UserAnswer {
   const factory _UserAnswer({
-    required final List<SystemModule> interestedModules,
-    required final Map<String, SystemModule> priorityModules,
+    required final List<Map<String, dynamic>> interestedModules,
+    required final Map<String, Map<String, dynamic>> priorityModules,
     required final List<UserInterest> userInterests,
     required final List<CategoryImportance> categoryImportance,
     final String? comments,
@@ -292,9 +292,9 @@ abstract class _UserAnswer implements UserAnswer {
       _$UserAnswerImpl.fromJson;
 
   @override
-  List<SystemModule> get interestedModules;
+  List<Map<String, dynamic>> get interestedModules;
   @override
-  Map<String, SystemModule> get priorityModules;
+  Map<String, Map<String, dynamic>> get priorityModules;
   @override
   List<UserInterest> get userInterests;
   @override
