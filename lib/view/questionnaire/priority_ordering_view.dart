@@ -4,6 +4,7 @@ import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/model/model.dart';
 import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
 class PriorityOrderingView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -44,6 +45,7 @@ class PriorityOrderingView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const MobileProgressHeader(),
           _buildHeader(),
           const SizedBox(height: 32),
           Expanded(

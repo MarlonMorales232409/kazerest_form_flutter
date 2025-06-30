@@ -355,8 +355,15 @@ class PositionedCircularProgress extends StatelessWidget {
     
     final isDesktop = screenWidth > 1024;
     final isTablet = screenWidth > 768 && screenWidth <= 1024;
+    final isMobile = screenWidth <= 768;
     
-    // Responsive sizing with safe area considerations
+    // On mobile, don't show the overlapping progress indicator
+    // Instead, we'll integrate it into the layout
+    if (isMobile) {
+      return const SizedBox.shrink();
+    }
+    
+    // Responsive sizing with safe area considerations for tablet and desktop
     double size = 70.0;
     double topOffset = 20.0 + padding.top;
     double rightOffset = 20.0;
@@ -384,5 +391,154 @@ class PositionedCircularProgress extends StatelessWidget {
         showOnFinishScreen: showOnFinishScreen,
       ),
     );
+  }
+}
+
+// New widget for integrated mobile progress
+class MobileProgressHeader extends StatelessWidget {
+  final bool showOnFinishScreen;
+  
+  const MobileProgressHeader({
+    super.key,
+    this.showOnFinishScreen = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth <= 768;
+    
+    // Only show on mobile devices
+    if (!isMobile) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            DarkTheme.backgroundCard.withOpacity(0.8),
+            DarkTheme.backgroundCardElevated.withOpacity(0.6),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: DarkTheme.primaryPurple.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: DarkTheme.primaryPurple.withOpacity(0.1),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // App title/step info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        gradient: DarkTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(
+                        Icons.assessment_rounded,
+                        color: DarkTheme.textPrimary,
+                        size: 16,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
+                      'KazeRest Form',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: DarkTheme.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+                if (!showOnFinishScreen) ...[
+                  const SizedBox(height: 8),
+                  _buildStepInfo(),
+                ] else ...[
+                  const SizedBox(height: 4),
+                  const Text(
+                    'Evaluación Completada',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: DarkTheme.accentGreen,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Compact progress indicator
+          CircularProgressWidget(
+            size: 50,
+            showOnFinishScreen: showOnFinishScreen,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepInfo() {
+    if (!Get.isRegistered<QuestionnaireController>()) {
+      return const Text(
+        'Paso 1 de 5 • Evaluando producto',
+        style: TextStyle(
+          fontSize: 13,
+          color: DarkTheme.textSecondary,
+        ),
+      );
+    }
+    
+    final controller = Get.find<QuestionnaireController>();
+    
+    return Obx(() {
+      final currentStep = controller.currentStep.value;
+      String stepName = _getStepName(currentStep);
+      
+      return Text(
+        'Paso ${currentStep + 1} de 5 • $stepName',
+        style: const TextStyle(
+          fontSize: 13,
+          color: DarkTheme.textSecondary,
+        ),
+      );
+    });
+  }
+  
+  String _getStepName(int step) {
+    switch (step) {
+      case 0:
+        return 'Módulos de Interés';
+      case 1:
+        return 'Prioridad de Módulos';
+      case 2:
+        return 'Calificaciones';
+      case 3:
+        return 'Importancia de Categorías';
+      case 4:
+        return 'Datos del Usuario';
+      default:
+        return 'Evaluando producto';
+    }
   }
 }

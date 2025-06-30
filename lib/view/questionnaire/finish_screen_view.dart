@@ -47,6 +47,7 @@ class FinishScreenView extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
+          const MobileProgressHeader(showOnFinishScreen: true),
           Expanded(
             child: _buildContent(),
           ),

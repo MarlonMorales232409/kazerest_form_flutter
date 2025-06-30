@@ -4,6 +4,7 @@ import 'package:kazerest_form/controller/questionnaire_controller.dart';
 import 'package:kazerest_form/db_local/db_local.dart';
 import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
 class CalificationsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
@@ -44,6 +45,7 @@ class CalificationsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const MobileProgressHeader(),
           _buildHeader(),
           const SizedBox(height: 32),
           Expanded(
