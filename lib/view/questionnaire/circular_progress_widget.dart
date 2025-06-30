@@ -22,8 +22,14 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     with TickerProviderStateMixin {
   late AnimationController _pulseController;
   late AnimationController _glowController;
+  late AnimationController _progressController;
   late Animation<double> _pulseAnimation;
   late Animation<double> _glowAnimation;
+  late Animation<double> _progressAnimation;
+  
+  // Static variable to persist progress across widget rebuilds and screen changes
+  static double _persistentProgress = 0.0;
+  double _targetProgress = 0.0;
 
   @override
   void initState() {
@@ -55,6 +61,21 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       curve: Curves.easeInOut,
     ));
     
+    // Progress animation for smooth transitions
+    _progressController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    // Initialize progress animation - start with persistent progress
+    _progressAnimation = Tween<double>(
+      begin: _persistentProgress,
+      end: _persistentProgress,
+    ).animate(CurvedAnimation(
+      parent: _progressController,
+      curve: Curves.easeInOut,
+    ));
+    
     // Start animations
     _pulseController.repeat(reverse: true);
     _glowController.repeat(reverse: true);
@@ -64,7 +85,32 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
   void dispose() {
     _pulseController.dispose();
     _glowController.dispose();
+    _progressController.dispose();
     super.dispose();
+  }
+
+  void _animateToProgress(double newProgress) {
+    if ((_targetProgress - newProgress).abs() > 0.01) { // Only animate if there's a significant change
+      final startProgress = _persistentProgress; // Start from persistent progress
+      _targetProgress = newProgress;
+      
+      _progressAnimation = Tween<double>(
+        begin: startProgress,
+        end: _targetProgress,
+      ).animate(CurvedAnimation(
+        parent: _progressController,
+        curve: Curves.easeInOut,
+      ));
+      
+      _progressController.reset();
+      _progressController.forward().then((_) {
+        // Update persistent progress when animation completes
+        _persistentProgress = _targetProgress;
+      });
+    } else {
+      // If the change is too small, just update the persistent progress directly
+      _persistentProgress = newProgress;
+    }
   }
 
   @override
@@ -73,7 +119,9 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     if (!Get.isRegistered<QuestionnaireController>()) {
       // If no controller is registered, just show a static progress
       const totalSteps = 5;
-      return _buildProgressWidget(0, totalSteps, 0.2);
+      final staticProgress = 0.2;
+      _animateToProgress(staticProgress);
+      return _buildProgressWidget(0, totalSteps, staticProgress);
     }
     
     final controller = Get.find<QuestionnaireController>();
@@ -83,6 +131,7 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     
     if (widget.showOnFinishScreen) {
       // For finish screen, no need for reactivity
+      _animateToProgress(1.0);
       return _buildProgressWidget(totalSteps, totalSteps, 1.0);
     }
     
@@ -93,14 +142,22 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       // Calculate progress percentage
       double progressPercent = (currentStepValue + 1) / totalSteps;
       
+      // Animate to the new progress
+      _animateToProgress(progressPercent);
+      
       return _buildProgressWidget(currentStepValue, totalSteps, progressPercent);
     });
   }
 
-  Widget _buildProgressWidget(int currentStep, int totalSteps, double progressPercent) {
+  Widget _buildProgressWidget(int currentStep, int totalSteps, double targetProgress) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_pulseAnimation, _glowAnimation]),
+      animation: Listenable.merge([_pulseAnimation, _glowAnimation, _progressController]),
       builder: (context, child) {
+        // Use the animation value or the persistent progress if not animating
+        final currentDisplayProgress = _progressController.isAnimating 
+            ? _progressAnimation.value.clamp(0.0, 1.0)
+            : _persistentProgress.clamp(0.0, 1.0);
+        
         return Transform.scale(
           scale: _pulseAnimation.value,
           child: Container(
@@ -125,16 +182,15 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
             child: CircularPercentIndicator(
               radius: widget.size / 2,
               lineWidth: 7.0,
-              animation: true,
-              animationDuration: 1500,
-              percent: progressPercent,
+              animation: false, // Disable built-in animation
+              percent: currentDisplayProgress, // Use our tracked progress
               center: _buildCenterContent(currentStep, totalSteps),
               circularStrokeCap: CircularStrokeCap.round,
               backgroundColor: DarkTheme.backgroundCard.withOpacity(0.3),
               backgroundWidth: 5.0,
               // Enhanced gradient based on progress
               linearGradient: LinearGradient(
-                colors: _getGradientColors(progressPercent),
+                colors: _getGradientColors(currentDisplayProgress),
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
