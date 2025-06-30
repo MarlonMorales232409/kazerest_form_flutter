@@ -150,7 +150,7 @@ class WelcomeScreenView extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
-        final fontSize = screenWidth < 768 ? 28.0 : 36.0;
+        final fontSize = screenWidth < 768 ? 34.0 : 42.0;
         
         return Text(
           'Bienvenido a KazeRest',
