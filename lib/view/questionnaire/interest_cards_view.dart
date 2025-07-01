@@ -10,7 +10,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class InterestCardsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  InterestCardsView({Key? key}) : super(key: key);
+  InterestCardsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -421,7 +421,7 @@ class InterestCardsView extends StatelessWidget {
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }

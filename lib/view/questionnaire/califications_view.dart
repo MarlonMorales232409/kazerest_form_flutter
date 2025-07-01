@@ -9,7 +9,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class CalificationsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  CalificationsView({Key? key}) : super(key: key);
+  CalificationsView({super.key});
 
   @override
   Widget build(BuildContext context) {

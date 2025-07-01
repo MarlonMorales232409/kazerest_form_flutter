@@ -9,7 +9,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class PriorityOrderingView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  PriorityOrderingView({Key? key}) : super(key: key);
+  PriorityOrderingView({super.key});
 
   @override
   Widget build(BuildContext context) {
