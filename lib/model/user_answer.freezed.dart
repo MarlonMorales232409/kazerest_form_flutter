@@ -28,7 +28,13 @@ mixin _$UserAnswer {
   List<UserInterest> get userInterests => throw _privateConstructorUsedError;
   List<CategoryImportance> get categoryImportance =>
       throw _privateConstructorUsedError;
-  String? get comments => throw _privateConstructorUsedError;
+  String? get comments =>
+      throw _privateConstructorUsedError; // User contact information
+  String? get userName => throw _privateConstructorUsedError;
+  String? get userEmail => throw _privateConstructorUsedError;
+  String? get userPhone => throw _privateConstructorUsedError;
+  String? get businessName => throw _privateConstructorUsedError;
+  String? get userRole => throw _privateConstructorUsedError;
 
   /// Serializes this UserAnswer to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -53,6 +59,11 @@ abstract class $UserAnswerCopyWith<$Res> {
     List<UserInterest> userInterests,
     List<CategoryImportance> categoryImportance,
     String? comments,
+    String? userName,
+    String? userEmail,
+    String? userPhone,
+    String? businessName,
+    String? userRole,
   });
 }
 
@@ -76,6 +87,11 @@ class _$UserAnswerCopyWithImpl<$Res, $Val extends UserAnswer>
     Object? userInterests = null,
     Object? categoryImportance = null,
     Object? comments = freezed,
+    Object? userName = freezed,
+    Object? userEmail = freezed,
+    Object? userPhone = freezed,
+    Object? businessName = freezed,
+    Object? userRole = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -99,6 +115,26 @@ class _$UserAnswerCopyWithImpl<$Res, $Val extends UserAnswer>
                 ? _value.comments
                 : comments // ignore: cast_nullable_to_non_nullable
                       as String?,
+            userName: freezed == userName
+                ? _value.userName
+                : userName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userEmail: freezed == userEmail
+                ? _value.userEmail
+                : userEmail // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userPhone: freezed == userPhone
+                ? _value.userPhone
+                : userPhone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            businessName: freezed == businessName
+                ? _value.businessName
+                : businessName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userRole: freezed == userRole
+                ? _value.userRole
+                : userRole // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -120,6 +156,11 @@ abstract class _$$UserAnswerImplCopyWith<$Res>
     List<UserInterest> userInterests,
     List<CategoryImportance> categoryImportance,
     String? comments,
+    String? userName,
+    String? userEmail,
+    String? userPhone,
+    String? businessName,
+    String? userRole,
   });
 }
 
@@ -142,6 +183,11 @@ class __$$UserAnswerImplCopyWithImpl<$Res>
     Object? userInterests = null,
     Object? categoryImportance = null,
     Object? comments = freezed,
+    Object? userName = freezed,
+    Object? userEmail = freezed,
+    Object? userPhone = freezed,
+    Object? businessName = freezed,
+    Object? userRole = freezed,
   }) {
     return _then(
       _$UserAnswerImpl(
@@ -165,6 +211,26 @@ class __$$UserAnswerImplCopyWithImpl<$Res>
             ? _value.comments
             : comments // ignore: cast_nullable_to_non_nullable
                   as String?,
+        userName: freezed == userName
+            ? _value.userName
+            : userName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userEmail: freezed == userEmail
+            ? _value.userEmail
+            : userEmail // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userPhone: freezed == userPhone
+            ? _value.userPhone
+            : userPhone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        businessName: freezed == businessName
+            ? _value.businessName
+            : businessName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userRole: freezed == userRole
+            ? _value.userRole
+            : userRole // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -179,6 +245,11 @@ class _$UserAnswerImpl implements _UserAnswer {
     required final List<UserInterest> userInterests,
     required final List<CategoryImportance> categoryImportance,
     this.comments,
+    this.userName,
+    this.userEmail,
+    this.userPhone,
+    this.businessName,
+    this.userRole,
   }) : _interestedModules = interestedModules,
        _priorityModules = priorityModules,
        _userInterests = userInterests,
@@ -223,10 +294,21 @@ class _$UserAnswerImpl implements _UserAnswer {
 
   @override
   final String? comments;
+  // User contact information
+  @override
+  final String? userName;
+  @override
+  final String? userEmail;
+  @override
+  final String? userPhone;
+  @override
+  final String? businessName;
+  @override
+  final String? userRole;
 
   @override
   String toString() {
-    return 'UserAnswer(interestedModules: $interestedModules, priorityModules: $priorityModules, userInterests: $userInterests, categoryImportance: $categoryImportance, comments: $comments)';
+    return 'UserAnswer(interestedModules: $interestedModules, priorityModules: $priorityModules, userInterests: $userInterests, categoryImportance: $categoryImportance, comments: $comments, userName: $userName, userEmail: $userEmail, userPhone: $userPhone, businessName: $businessName, userRole: $userRole)';
   }
 
   @override
@@ -251,7 +333,17 @@ class _$UserAnswerImpl implements _UserAnswer {
               _categoryImportance,
             ) &&
             (identical(other.comments, comments) ||
-                other.comments == comments));
+                other.comments == comments) &&
+            (identical(other.userName, userName) ||
+                other.userName == userName) &&
+            (identical(other.userEmail, userEmail) ||
+                other.userEmail == userEmail) &&
+            (identical(other.userPhone, userPhone) ||
+                other.userPhone == userPhone) &&
+            (identical(other.businessName, businessName) ||
+                other.businessName == businessName) &&
+            (identical(other.userRole, userRole) ||
+                other.userRole == userRole));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -263,6 +355,11 @@ class _$UserAnswerImpl implements _UserAnswer {
     const DeepCollectionEquality().hash(_userInterests),
     const DeepCollectionEquality().hash(_categoryImportance),
     comments,
+    userName,
+    userEmail,
+    userPhone,
+    businessName,
+    userRole,
   );
 
   /// Create a copy of UserAnswer
@@ -286,6 +383,11 @@ abstract class _UserAnswer implements UserAnswer {
     required final List<UserInterest> userInterests,
     required final List<CategoryImportance> categoryImportance,
     final String? comments,
+    final String? userName,
+    final String? userEmail,
+    final String? userPhone,
+    final String? businessName,
+    final String? userRole,
   }) = _$UserAnswerImpl;
 
   factory _UserAnswer.fromJson(Map<String, dynamic> json) =
@@ -300,7 +402,17 @@ abstract class _UserAnswer implements UserAnswer {
   @override
   List<CategoryImportance> get categoryImportance;
   @override
-  String? get comments;
+  String? get comments; // User contact information
+  @override
+  String? get userName;
+  @override
+  String? get userEmail;
+  @override
+  String? get userPhone;
+  @override
+  String? get businessName;
+  @override
+  String? get userRole;
 
   /// Create a copy of UserAnswer
   /// with the given fields replaced by the non-null parameter values.
