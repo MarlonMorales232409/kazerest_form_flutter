@@ -14,7 +14,6 @@ abstract class UserAnswer with _$UserAnswer {
     required List<UserInterest> userInterests,
     required List<CategoryImportance> categoryImportance,
     String? comments,
-
   }) = _UserAnswer;
 
   factory UserAnswer.fromJson(Map<String, dynamic> json) =>

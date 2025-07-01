@@ -2,8 +2,8 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow read/write access to all users for now
-    // You should modify these rules based on your security requirements
+    // Permitir acceso completo para desarrollo
+    // CAMBIAR EN PRODUCCIÓN por reglas más específicas
     match /{document=**} {
       allow read, write: if true;
     }

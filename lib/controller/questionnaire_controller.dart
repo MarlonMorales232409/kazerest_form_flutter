@@ -279,6 +279,7 @@ class QuestionnaireController extends GetxController {
     final userInterests = userCalifications.entries.map((entry) {
       final calification = califications.firstWhere((c) => c.id == entry.key);
       return UserInterest(
+        id: calification.id.toString(), // Add the id field
         title: calification.name,
         maxLevel: calification.maxValue,
         userLevel: entry.value,
@@ -296,7 +297,7 @@ class QuestionnaireController extends GetxController {
       interestedModules: interestedModulesData,
       priorityModules: priorityMap,
       userInterests: userInterests,
-      categoryImportance: categoryImportances,
+      categoryImportance: categoryImportances.toList(),
       comments: comments.value.isEmpty ? null : comments.value,
     );
   }

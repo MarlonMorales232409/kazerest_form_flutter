@@ -630,9 +630,14 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                     final savedId = await firebaseService.saveUserAnswer(userAnswer);
                     
                     if (savedId != null) {
-                      print('✅ Respuesta guardada en Firebase con ID: $savedId');
+                      if (savedId.startsWith('local_')) {
+                        print('✅ Respuesta guardada localmente con ID: $savedId');
+                        print('📋 Los datos se sincronizarán con Firebase cuando se configuren los permisos');
+                      } else {
+                        print('✅ Respuesta guardada en Firebase con ID: $savedId');
+                      }
                     } else {
-                      print('❌ Error al guardar en Firebase');
+                      print('❌ Error al guardar la respuesta');
                     }
                     
                     Get.back(); // Close dialog

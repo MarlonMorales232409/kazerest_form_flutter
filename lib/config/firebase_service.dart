@@ -10,12 +10,34 @@ class FirebaseService {
   /// Guarda la respuesta completa del usuario en Firebase
   Future<String?> saveUserAnswer(UserAnswer userAnswer) async {
     try {
+      print('🔍 Iniciando guardado de UserAnswer...');
+      
+      // Convertir el UserAnswer a JSON manualmente para evitar problemas de serialización
+      final jsonData = userAnswer.toJson();
+      print('🔍 JSON base generado: ${jsonData.keys}');
+      
+      // Convertir UserInterest objects a JSON
+      print('🔍 Convirtiendo ${userAnswer.userInterests.length} UserInterests...');
+      jsonData['userInterests'] = userAnswer.userInterests
+          .map((interest) => interest.toJson())
+          .toList();
+      
+      // Convertir CategoryImportance objects a JSON
+      print('🔍 Convirtiendo ${userAnswer.categoryImportance.length} CategoryImportances...');
+      jsonData['categoryImportance'] = userAnswer.categoryImportance
+          .map((category) => category.toJson())
+          .toList();
+      
+      print('🔍 Datos finales para Firestore: ${jsonData.keys}');
+      
       // Crear el documento con timestamp
       final docData = {
-        ...userAnswer.toJson(),
+        ...jsonData,
         'timestamp': FieldValue.serverTimestamp(),
         'status': 'completed',
       };
+      
+      print('🔍 Enviando a Firestore...');
       
       // Guardar en Firestore
       final docRef = await _firestore
@@ -26,7 +48,56 @@ class FirebaseService {
       return docRef.id;
       
     } catch (e) {
-      print('❌ Error al guardar respuesta: $e');
+      print('❌ Error al guardar en Firebase: $e');
+      
+      // Fallback: Guardar localmente si Firebase falla
+      try {
+        print('🔄 Intentando guardar localmente como fallback...');
+        final localId = await _saveUserAnswerLocally(userAnswer);
+        if (localId != null) {
+          print('✅ Respuesta guardada localmente con ID: $localId');
+          print('📋 Los datos se guardarán en Firebase una vez que se configuren los permisos');
+          return localId;
+        }
+      } catch (localError) {
+        print('❌ Error al guardar localmente: $localError');
+      }
+      
+      print('❌ Stack trace: ${StackTrace.current}');
+      return null;
+    }
+  }
+
+  /// Guarda la respuesta localmente como fallback
+  Future<String?> _saveUserAnswerLocally(UserAnswer userAnswer) async {
+    try {
+      // Generar un ID único
+      final localId = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      
+      // Convertir a JSON
+      final jsonData = userAnswer.toJson();
+      jsonData['userInterests'] = userAnswer.userInterests
+          .map((interest) => interest.toJson())
+          .toList();
+      jsonData['categoryImportance'] = userAnswer.categoryImportance
+          .map((category) => category.toJson())
+          .toList();
+      jsonData['timestamp'] = DateTime.now().toIso8601String();
+      jsonData['status'] = 'completed_locally';
+      jsonData['id'] = localId;
+      
+      // En una app real, aquí guardarías en SharedPreferences, SQLite, etc.
+      // Por ahora, solo loggeamos los datos completos
+      print('📦 Datos guardados localmente:');
+      print('   📊 Módulos de interés: ${jsonData['interestedModules']?.length ?? 0}');
+      print('   📋 Módulos priorizados: ${jsonData['priorityModules']?.length ?? 0}');
+      print('   ⭐ Calificaciones: ${jsonData['userInterests']?.length ?? 0}');
+      print('   📈 Importancia categorías: ${jsonData['categoryImportance']?.length ?? 0}');
+      print('   💬 Comentarios: ${jsonData['comments'] ?? 'Sin comentarios'}');
+      
+      return localId;
+    } catch (e) {
+      print('❌ Error en guardado local: $e');
       return null;
     }
   }

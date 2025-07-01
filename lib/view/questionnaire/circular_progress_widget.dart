@@ -90,9 +90,12 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
   }
 
   void _animateToProgress(double newProgress) {
-    if ((_targetProgress - newProgress).abs() > 0.01) { // Only animate if there's a significant change
+    // Always update target progress to maintain consistency
+    _targetProgress = newProgress;
+    
+    // Only animate if there's a significant change and we're not in the middle of another animation
+    if ((_persistentProgress - newProgress).abs() > 0.01 && !_progressController.isAnimating) {
       final startProgress = _persistentProgress; // Start from persistent progress
-      _targetProgress = newProgress;
       
       _progressAnimation = Tween<double>(
         begin: startProgress,
@@ -107,10 +110,12 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
         // Update persistent progress when animation completes
         _persistentProgress = _targetProgress;
       });
-    } else {
+    } else if ((_persistentProgress - newProgress).abs() <= 0.01) {
       // If the change is too small, just update the persistent progress directly
       _persistentProgress = newProgress;
     }
+    // If we're already animating, don't interrupt the current animation
+    // The persistent progress will be updated when the current animation completes
   }
 
   @override
@@ -120,6 +125,9 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       // If no controller is registered, just show a static progress
       const totalSteps = 5;
       final staticProgress = 0.2;
+      if (_persistentProgress == 0.0) {
+        _persistentProgress = staticProgress;
+      }
       _animateToProgress(staticProgress);
       return _buildProgressWidget(0, totalSteps, staticProgress);
     }
@@ -142,6 +150,14 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       // Calculate progress percentage
       double progressPercent = (currentStepValue + 1) / totalSteps;
       
+      // Initialize persistent progress if it hasn't been set yet or if it's lower than current
+      if (_persistentProgress == 0.0 || _persistentProgress < progressPercent) {
+        // Only initialize or increase progress, never decrease during normal operation
+        if (_persistentProgress == 0.0) {
+          _persistentProgress = progressPercent;
+        }
+      }
+      
       // Animate to the new progress
       _animateToProgress(progressPercent);
       
@@ -153,7 +169,8 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     return AnimatedBuilder(
       animation: Listenable.merge([_pulseAnimation, _glowAnimation, _progressController]),
       builder: (context, child) {
-        // Use the animation value or the persistent progress if not animating
+        // Use the animation value only if we're actively animating, otherwise use persistent progress
+        // This ensures that screen resizes don't reset the visual progress
         final currentDisplayProgress = _progressController.isAnimating 
             ? _progressAnimation.value.clamp(0.0, 1.0)
             : _persistentProgress.clamp(0.0, 1.0);
