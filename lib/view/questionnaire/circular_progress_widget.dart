@@ -213,6 +213,21 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     );
   }
 
+  // Helper method to get the current progress color
+  Color _getCurrentProgressColor(double progress) {
+    if (widget.showOnFinishScreen || progress >= 1.0) {
+      return DarkTheme.accentGreen;
+    } else if (progress >= 0.7) {
+      // Start the green transition earlier and make it more gradual
+      final greenRatio = (progress - 0.7) / 0.3; // More gradual from 0.7 to 1.0
+      final smoothRatio = _smoothStep(greenRatio); // Apply smooth interpolation
+      
+      return Color.lerp(DarkTheme.primaryPurple, DarkTheme.accentGreen, smoothRatio)!;
+    } else {
+      return DarkTheme.primaryPurple;
+    }
+  }
+
   List<Color> _getGradientColors(double progress) {
     if (widget.showOnFinishScreen || progress >= 1.0) {
       // When completed, use solid green colors for a complete circle
@@ -263,6 +278,10 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
   }
 
   Widget _buildStepCounter(int currentStep, int totalSteps) {
+    // Calculate progress to get the appropriate color
+    final progressPercent = widget.showOnFinishScreen ? 1.0 : (currentStep + 1) / totalSteps;
+    final currentColor = _getCurrentProgressColor(progressPercent);
+    
     // For very small sizes, use a simplified layout
     if (widget.size < 60) {
       return Container(
@@ -271,15 +290,15 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
         decoration: BoxDecoration(
           gradient: RadialGradient(
             colors: [
-              DarkTheme.primaryPurple.withOpacity(0.15),
-              DarkTheme.primaryPurple.withOpacity(0.05),
+              currentColor.withOpacity(0.15),
+              currentColor.withOpacity(0.05),
               Colors.transparent,
             ],
             stops: const [0.0, 0.7, 1.0],
           ),
           borderRadius: BorderRadius.circular(widget.size / 4),
           border: Border.all(
-            color: DarkTheme.primaryPurple.withOpacity(0.3),
+            color: currentColor.withOpacity(0.3),
             width: 1.0,
           ),
         ),
@@ -289,7 +308,7 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
             style: TextStyle(
               fontSize: widget.size * 0.3,
               fontWeight: FontWeight.bold,
-              color: DarkTheme.primaryPurple,
+              color: currentColor,
             ),
           ),
         ),
@@ -302,20 +321,20 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       decoration: BoxDecoration(
         gradient: RadialGradient(
           colors: [
-            DarkTheme.primaryPurple.withOpacity(0.15),
-            DarkTheme.primaryPurple.withOpacity(0.05),
+            currentColor.withOpacity(0.15),
+            currentColor.withOpacity(0.05),
             Colors.transparent,
           ],
           stops: const [0.0, 0.7, 1.0],
         ),
         borderRadius: BorderRadius.circular(widget.size / 4),
         border: Border.all(
-          color: DarkTheme.primaryPurple.withOpacity(0.3),
+          color: currentColor.withOpacity(0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: DarkTheme.primaryPurple.withOpacity(0.1),
+            color: currentColor.withOpacity(0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -330,10 +349,10 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
             style: TextStyle(
               fontSize: widget.size * 0.26, // Slightly smaller font
               fontWeight: FontWeight.bold,
-              color: DarkTheme.primaryPurple,
+              color: currentColor,
               shadows: [
                 Shadow(
-                  color: DarkTheme.primaryPurple.withOpacity(0.3),
+                  color: currentColor.withOpacity(0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 1),
                 ),
@@ -347,7 +366,7 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
               gradient: LinearGradient(
                 colors: [
                   Colors.transparent,
-                  DarkTheme.primaryPurple.withOpacity(0.7),
+                  currentColor.withOpacity(0.7),
                   Colors.transparent,
                 ],
               ),
@@ -588,7 +607,7 @@ class MobileProgressHeader extends StatelessWidget {
       return const Text(
         'Paso 1 de 5 • Evaluando producto',
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 15,
           color: DarkTheme.textSecondary,
         ),
       );
@@ -603,7 +622,7 @@ class MobileProgressHeader extends StatelessWidget {
       return Text(
         'Paso ${currentStep + 1} de 5 • $stepName',
         style: const TextStyle(
-          fontSize: 13,
+          fontSize: 15,
           color: DarkTheme.textSecondary,
         ),
       );
@@ -615,11 +634,11 @@ class MobileProgressHeader extends StatelessWidget {
       case 0:
         return 'Módulos de Interés';
       case 1:
-        return 'Prioridad de Módulos';
+        return 'Prioriza Módulos';
       case 2:
-        return 'Calificaciones';
+        return 'Prioridades del Software';
       case 3:
-        return 'Importancia de Categorías';
+        return 'Ventajas Tecnológicas';
       case 4:
         return 'Datos del Usuario';
       default:

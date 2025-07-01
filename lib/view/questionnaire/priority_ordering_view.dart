@@ -9,7 +9,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class PriorityOrderingView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  PriorityOrderingView({Key? key}) : super(key: key);
+  PriorityOrderingView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +125,7 @@ class PriorityOrderingView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Ordena por Prioridad',
+          'Prioriza los Módulos de Software',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -134,9 +134,9 @@ class PriorityOrderingView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         const Text(
-          'Arrastra y ordena los módulos según la importancia para tu negocio. El primer elemento será tu máxima prioridad.',
+          'Arrastra y ordena los módulos según su prioridad para tu negocio. El primer elemento será el más importante.',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             color: DarkTheme.textSecondary,
             height: 1.5,
           ),
@@ -182,7 +182,7 @@ class PriorityOrderingView extends StatelessWidget {
                 child: Obx(() => Text(
                   '${controller.priorityModules.length} módulos seleccionados para ordenar',
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: DarkTheme.textSecondary,
                   ),
@@ -304,7 +304,7 @@ class PriorityOrderingView extends StatelessWidget {
                       Text(
                         module.title,
                         style: const TextStyle(
-                          fontSize: 16,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: DarkTheme.textPrimary,
                         ),
@@ -313,7 +313,7 @@ class PriorityOrderingView extends StatelessWidget {
                       Text(
                         module.description,
                         style: const TextStyle(
-                          fontSize: 14,
+                          fontSize: 16,
                           color: DarkTheme.textSecondary,
                           height: 1.4,
                         ),
@@ -438,7 +438,7 @@ class PriorityOrderingView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Ordena por Prioridad',
+          'Prioriza los Módulos de Software',
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -447,7 +447,7 @@ class PriorityOrderingView extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         const Text(
-          'Organiza los módulos según su importancia para tu negocio. Esta información nos ayudará a personalizar mejor nuestra propuesta.',
+          'Organiza los módulos según su prioridad para tu negocio. Esta información nos ayudará a personalizar mejor nuestra propuesta.',
           style: TextStyle(
             fontSize: 18,
             color: DarkTheme.textSecondary,

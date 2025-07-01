@@ -9,7 +9,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class CalificationsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  CalificationsView({Key? key}) : super(key: key);
+  CalificationsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +143,7 @@ class CalificationsView extends StatelessWidget {
             const SizedBox(width: 16),
             const Expanded(
               child: Text(
-                'Califica la Importancia',
+                '¿Qué es lo más importante del software para tu negocio?',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
@@ -155,9 +155,9 @@ class CalificationsView extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         const Text(
-          'Califica del 1 al 5 qué tan importante es cada aspecto para tu negocio. Esto nos ayudará a personalizar mejor la solución.',
+          'Evalúa cada aspecto según su importancia para tu negocio. Esta información nos permitirá personalizar mejor nuestra propuesta.',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             color: DarkTheme.textSecondary,
             height: 1.5,
           ),
@@ -521,7 +521,7 @@ class CalificationsView extends StatelessWidget {
             const SizedBox(width: 20),
             const Expanded(
               child: Text(
-                'Califica la Importancia',
+                '¿Qué es lo más importante del software para tu negocio?',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.bold,

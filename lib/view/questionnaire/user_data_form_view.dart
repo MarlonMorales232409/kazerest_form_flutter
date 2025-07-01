@@ -158,7 +158,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
         const Text(
           'Para finalizar, compártenos tus datos de contacto. Te enviaremos una propuesta personalizada basada en tus respuestas.',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             color: Color(0xFF6B7280),
             height: 1.5,
           ),
@@ -271,7 +271,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
             ),
             const SizedBox(height: 16),
             _buildTextFormField(
-              label: 'Teléfono *',
+              label: 'Teléfono de la oficina *',
               hint: 'Ej: +52 55 1234 5678',
               icon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
@@ -360,28 +360,6 @@ class _UserDataFormViewState extends State<UserDataFormView> {
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'El nombre del negocio es obligatorio';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildDropdownField(
-              label: 'Tu cargo en el negocio *',
-              hint: 'Selecciona tu rol',
-              icon: Icons.work_outline,
-              items: const [
-                'Propietario',
-                'Gerente General',
-                'Gerente de Operaciones',
-                'Chef / Jefe de Cocina',
-                'Administrador',
-                'Encargado de Sistemas',
-                'Otro',
-              ],
-              onChanged: (value) => controller.userRole.value = value ?? '',
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Selecciona tu cargo';
                 }
                 return null;
               },
@@ -518,83 +496,6 @@ class _UserDataFormViewState extends State<UserDataFormView> {
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String hint,
-    required IconData icon,
-    required List<String> items,
-    required Function(String?) onChanged,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: DarkTheme.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        DropdownButtonFormField<String>(
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(
-              icon,
-              color: DarkTheme.textMuted,
-              size: 20,
-            ),
-            filled: true,
-            fillColor: DarkTheme.backgroundCardElevated,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: DarkTheme.borderLight),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: DarkTheme.borderLight),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: DarkTheme.primaryPurple, width: 2),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: DarkTheme.error, width: 2),
-            ),
-            hintStyle: const TextStyle(
-              color: DarkTheme.textMuted,
-              fontSize: 14,
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-          ),
-          dropdownColor: DarkTheme.backgroundCard,
-          style: const TextStyle(color: DarkTheme.textPrimary),
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(
-                item,
-                style: const TextStyle(color: DarkTheme.textPrimary),
-              ),
-            );
-          }).toList(),
-          onChanged: onChanged,
-          validator: validator,
-        ),
-      ],
-    );
-  }
-
   Widget _buildNavigationButtons() {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth > 1024;
@@ -652,8 +553,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
     return controller.userName.value.isNotEmpty &&
            controller.userEmail.value.isNotEmpty &&
            controller.userPhone.value.isNotEmpty &&
-           controller.businessName.value.isNotEmpty &&
-           controller.userRole.value.isNotEmpty;
+           controller.businessName.value.isNotEmpty;
   }
 
   void _submitForm() {

@@ -10,7 +10,7 @@ import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 class InterestCardsView extends StatelessWidget {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
 
-  InterestCardsView({Key? key}) : super(key: key);
+  InterestCardsView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,7 @@ class InterestCardsView extends StatelessWidget {
         const Text(
           'Arrastra las tarjetas para seleccionar las funciones que más te interesan para tu negocio',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             color: DarkTheme.textSecondary,
             height: 1.5,
           ),
@@ -360,7 +360,7 @@ class InterestCardsView extends StatelessWidget {
                   Text(
                     module.description,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       color: DarkTheme.textSecondary,
                       height: 1.6,
                     ),
@@ -386,7 +386,7 @@ class InterestCardsView extends StatelessWidget {
         const Text(
           'Características principales:',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
             color: DarkTheme.textSecondary,
           ),
@@ -414,14 +414,14 @@ class InterestCardsView extends StatelessWidget {
                 child: Text(
                   feature,
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     color: DarkTheme.textMuted,
                   ),
                 ),
               ),
             ],
           ),
-        )).toList(),
+        )),
       ],
     );
   }
