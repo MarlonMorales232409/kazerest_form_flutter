@@ -29,11 +29,18 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
   
   // Static variable to persist progress across widget rebuilds and screen changes
   static double _persistentProgress = 0.0;
+  static bool _finishScreenVisited = false;
   double _targetProgress = 0.0;
 
   @override
   void initState() {
     super.initState();
+    
+    // If we're showing on finish screen and persistent progress is not 1.0, set it
+    if (widget.showOnFinishScreen && _persistentProgress < 1.0) {
+      _persistentProgress = 1.0;
+      _finishScreenVisited = true;
+    }
     
     // Pulse animation for the container
     _pulseController = AnimationController(
@@ -138,8 +145,12 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     const totalSteps = 5;
     
     if (widget.showOnFinishScreen) {
-      // For finish screen, no need for reactivity
-      _animateToProgress(1.0);
+      // For finish screen, ensure persistent progress is set to 1.0 and stays there
+      if (!_finishScreenVisited) {
+        _finishScreenVisited = true;
+        _persistentProgress = 1.0;
+        _animateToProgress(1.0);
+      }
       return _buildProgressWidget(totalSteps, totalSteps, 1.0);
     }
     
@@ -151,7 +162,8 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
       double progressPercent = (currentStepValue + 1) / totalSteps;
       
       // Initialize persistent progress if it hasn't been set yet or if it's lower than current
-      if (_persistentProgress == 0.0 || _persistentProgress < progressPercent) {
+      // But never decrease progress once finish screen has been visited
+      if (_persistentProgress == 0.0 || (_persistentProgress < progressPercent && !_finishScreenVisited)) {
         // Only initialize or increase progress, never decrease during normal operation
         if (_persistentProgress == 0.0) {
           _persistentProgress = progressPercent;
@@ -169,11 +181,13 @@ class _CircularProgressWidgetState extends State<CircularProgressWidget>
     return AnimatedBuilder(
       animation: Listenable.merge([_pulseAnimation, _glowAnimation, _progressController]),
       builder: (context, child) {
-        // Use the animation value only if we're actively animating, otherwise use persistent progress
-        // This ensures that screen resizes don't reset the visual progress
-        final currentDisplayProgress = _progressController.isAnimating 
-            ? _progressAnimation.value.clamp(0.0, 1.0)
-            : _persistentProgress.clamp(0.0, 1.0);
+        // For finish screen, always show 100% progress regardless of animation state
+        // Once finish screen is visited, maintain full progress even if we go back
+        final currentDisplayProgress = (widget.showOnFinishScreen || _finishScreenVisited) 
+            ? 1.0
+            : (_progressController.isAnimating 
+                ? _progressAnimation.value.clamp(0.0, 1.0)
+                : _persistentProgress.clamp(0.0, 1.0));
         
         return Transform.scale(
           scale: _pulseAnimation.value * (currentDisplayProgress >= 1.0 ? 1.02 : 1.0), // Subtle pulse when complete

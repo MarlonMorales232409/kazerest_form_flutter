@@ -21,6 +21,11 @@ _$UserAnswerImpl _$$UserAnswerImplFromJson(Map<String, dynamic> json) =>
           .map((e) => CategoryImportance.fromJson(e as Map<String, dynamic>))
           .toList(),
       comments: json['comments'] as String?,
+      userName: json['userName'] as String?,
+      userEmail: json['userEmail'] as String?,
+      userPhone: json['userPhone'] as String?,
+      businessName: json['businessName'] as String?,
+      userRole: json['userRole'] as String?,
     );
 
 Map<String, dynamic> _$$UserAnswerImplToJson(_$UserAnswerImpl instance) =>
@@ -30,4 +35,9 @@ Map<String, dynamic> _$$UserAnswerImplToJson(_$UserAnswerImpl instance) =>
       'userInterests': instance.userInterests,
       'categoryImportance': instance.categoryImportance,
       'comments': instance.comments,
+      'userName': instance.userName,
+      'userEmail': instance.userEmail,
+      'userPhone': instance.userPhone,
+      'businessName': instance.businessName,
+      'userRole': instance.userRole,
     };

@@ -44,9 +44,11 @@ class WelcomeScreenView extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
           child: _buildStartButton(),
         ),
+        _buildWatermark(),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -61,9 +63,11 @@ class WelcomeScreenView extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(48, 8, 48, 32),
+          padding: const EdgeInsets.fromLTRB(48, 8, 48, 16),
           child: _buildStartButton(),
         ),
+        _buildWatermark(),
+        const SizedBox(height: 8),
       ],
     );
   }
@@ -81,9 +85,11 @@ class WelcomeScreenView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(48, 8, 48, 48),
+              padding: const EdgeInsets.fromLTRB(48, 8, 48, 16),
               child: _buildStartButton(),
             ),
+            _buildWatermark(),
+            const SizedBox(height: 16),
           ],
         ),
       ),
@@ -112,8 +118,8 @@ class WelcomeScreenView extends StatelessWidget {
       builder: (context, constraints) {
         // Responsive logo size
         final screenWidth = MediaQuery.of(context).size.width;
-        final logoSize = screenWidth < 768 ? 100.0 : 140.0;
-        final iconSize = screenWidth < 768 ? 50.0 : 70.0;
+        final logoSize = screenWidth < 768 ? 120.0 : 160.0;
+        final iconSize = screenWidth < 768 ? 60.0 : 80.0;
         
         return Container(
           width: logoSize,
@@ -324,6 +330,75 @@ class WelcomeScreenView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildWatermark() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: DarkTheme.primaryPurple.withOpacity(0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                'assets/logo.png',
+                width: 24,
+                height: 24,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high,
+                cacheWidth: 1200,
+                cacheHeight: 1200,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          DarkTheme.primaryPurple,
+                          DarkTheme.primaryPurpleLight,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.restaurant_menu_rounded,
+                      color: DarkTheme.textPrimary,
+                      size: 14,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'KazeCode',
+            style: TextStyle(
+              fontSize: 12,
+              color: DarkTheme.textSecondary,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }

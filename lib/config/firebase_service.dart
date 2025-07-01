@@ -89,7 +89,13 @@ class FirebaseService {
       // En una app real, aquí guardarías en SharedPreferences, SQLite, etc.
       // Por ahora, solo loggeamos los datos completos
       print('📦 Datos guardados localmente:');
-      print('   📊 Módulos de interés: ${jsonData['interestedModules']?.length ?? 0}');
+      print('   � Datos de usuario:');
+      print('     - Nombre: ${jsonData['userName'] ?? 'No especificado'}');
+      print('     - Email: ${jsonData['userEmail'] ?? 'No especificado'}');
+      print('     - Teléfono: ${jsonData['userPhone'] ?? 'No especificado'}');
+      print('     - Empresa: ${jsonData['businessName'] ?? 'No especificado'}');
+      print('     - Rol: ${jsonData['userRole'] ?? 'No especificado'}');
+      print('   �📊 Módulos de interés: ${jsonData['interestedModules']?.length ?? 0}');
       print('   📋 Módulos priorizados: ${jsonData['priorityModules']?.length ?? 0}');
       print('   ⭐ Calificaciones: ${jsonData['userInterests']?.length ?? 0}');
       print('   📈 Importancia categorías: ${jsonData['categoryImportance']?.length ?? 0}');

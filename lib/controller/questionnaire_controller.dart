@@ -299,6 +299,12 @@ class QuestionnaireController extends GetxController {
       userInterests: userInterests,
       categoryImportance: categoryImportances.toList(),
       comments: comments.value.isEmpty ? null : comments.value,
+      // Include user contact information
+      userName: userName.value.isEmpty ? null : userName.value,
+      userEmail: userEmail.value.isEmpty ? null : userEmail.value,
+      userPhone: userPhone.value.isEmpty ? null : userPhone.value,
+      businessName: businessName.value.isEmpty ? null : businessName.value,
+      userRole: userRole.value.isEmpty ? null : userRole.value,
     );
   }
   
