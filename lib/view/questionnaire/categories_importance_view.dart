@@ -6,10 +6,49 @@ import 'package:kazerest_form/view/widgets/custom_button.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
-class CategoriesImportanceView extends StatelessWidget {
-  final QuestionnaireController controller = Get.find<QuestionnaireController>();
+class CategoriesImportanceView extends StatefulWidget {
+  const CategoriesImportanceView({super.key});
 
-  CategoriesImportanceView({super.key});
+  @override
+  State<CategoriesImportanceView> createState() => _CategoriesImportanceViewState();
+}
+
+class _CategoriesImportanceViewState extends State<CategoriesImportanceView> {
+  final QuestionnaireController controller = Get.find<QuestionnaireController>();
+  final ScrollController _scrollController = ScrollController();
+  final RxBool _isHeaderVisible = true.obs;
+  double _previousScrollPosition = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final currentScrollPosition = _scrollController.position.pixels;
+    const threshold = 10.0;
+
+    if ((currentScrollPosition - _previousScrollPosition).abs() > threshold) {
+      if (currentScrollPosition > _previousScrollPosition && currentScrollPosition > 50) {
+        if (_isHeaderVisible.value) {
+          _isHeaderVisible.value = false;
+        }
+      } else if (currentScrollPosition < _previousScrollPosition) {
+        if (!_isHeaderVisible.value) {
+          _isHeaderVisible.value = true;
+        }
+      }
+      _previousScrollPosition = currentScrollPosition;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,22 +79,47 @@ class CategoriesImportanceView extends StatelessWidget {
   }
 
   Widget _buildMobileLayout() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const MobileProgressHeader(),
-          _buildHeader(),
-          const SizedBox(height: 32),
-          Expanded(
-            child: _buildCategoriesList(),
+    return Column(
+      children: [
+        // Header animado que se oculta/muestra
+        Obx(() => AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          height: _isHeaderVisible.value ? null : 0,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            opacity: _isHeaderVisible.value ? 1.0 : 0.0,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+              child: Column(
+                children: [
+                  const MobileProgressHeader(),
+                  _buildHeader(),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 24),
-          _buildNavigationButtons(),
-          const SizedBox(height: 16),
-        ],
-      ),
+        )),
+        // Contenido principal con scroll
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                Expanded(
+                  child: _buildCategoriesList(),
+                ),
+                const SizedBox(height: 24),
+                _buildNavigationButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -402,7 +466,12 @@ class CategoriesImportanceView extends StatelessWidget {
   }
 
   Widget _buildCategoriesList() {
+    final screenWidth = MediaQuery.of(Get.context!).size.width;
+    final isMobile = screenWidth <= 768;
+
     return ListView.builder(
+      controller: isMobile ? _scrollController : null,
+      physics: const BouncingScrollPhysics(),
       itemCount: categories.length,
       itemBuilder: (context, index) {
         final category = categories[index];
