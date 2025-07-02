@@ -137,6 +137,9 @@ class FinishScreenView extends StatelessWidget {
                 width: 24,
                 height: 24,
                 fit: BoxFit.cover,
+                cacheWidth: 24,
+                cacheHeight: 24,
+                filterQuality: FilterQuality.high,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: 24,
@@ -265,19 +268,6 @@ class FinishScreenView extends StatelessWidget {
             icon: Icons.refresh_rounded,
             onPressed: () {
               _startNewEvaluation();
-            },
-          ),
-        ),
-        const SizedBox(height: 12),
-        // Contact info
-        SizedBox(
-          width: double.infinity,
-          child: widgets.CustomButton(
-            text: 'Información de Contacto',
-            icon: Icons.contact_support_rounded,
-            isSecondary: true,
-            onPressed: () {
-              _showContactInfo();
             },
           ),
         ),

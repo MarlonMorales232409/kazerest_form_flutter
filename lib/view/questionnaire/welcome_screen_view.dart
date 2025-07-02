@@ -10,12 +10,8 @@ class WelcomeScreenView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: DarkTheme.backgroundGradient,
-        ),
-        child: SafeArea(
-          child: _buildResponsiveLayout(context),
-        ),
+        decoration: const BoxDecoration(gradient: DarkTheme.backgroundGradient),
+        child: SafeArea(child: _buildResponsiveLayout(context)),
       ),
     );
   }
@@ -24,7 +20,7 @@ class WelcomeScreenView extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isDesktop = screenWidth > 1024;
     final isTablet = screenWidth > 768 && screenWidth <= 1024;
-    
+
     if (isDesktop) {
       return _buildDesktopLayout(context);
     } else if (isTablet) {
@@ -58,7 +54,10 @@ class WelcomeScreenView extends StatelessWidget {
       children: [
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 32.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 48.0,
+              vertical: 32.0,
+            ),
             child: _buildScrollableContent(),
           ),
         ),
@@ -120,16 +119,13 @@ class WelcomeScreenView extends StatelessWidget {
         final screenWidth = MediaQuery.of(context).size.width;
         final logoSize = screenWidth < 768 ? 120.0 : 160.0;
         final iconSize = screenWidth < 768 ? 60.0 : 80.0;
-        
+
         return Container(
           width: logoSize,
           height: logoSize,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                DarkTheme.primaryPurple,
-                DarkTheme.primaryPurpleLight,
-              ],
+              colors: [DarkTheme.primaryPurple, DarkTheme.primaryPurpleLight],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -157,7 +153,7 @@ class WelcomeScreenView extends StatelessWidget {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
         final fontSize = screenWidth < 768 ? 34.0 : 42.0;
-        
+
         return Text(
           'Bienvenido a KazeRest',
           style: TextStyle(
@@ -177,7 +173,7 @@ class WelcomeScreenView extends StatelessWidget {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
         final fontSize = screenWidth < 768 ? 18.0 : 20.0;
-        
+
         return Text(
           'Evaluación de Software para Restaurantes',
           style: TextStyle(
@@ -197,10 +193,7 @@ class WelcomeScreenView extends StatelessWidget {
       decoration: BoxDecoration(
         color: DarkTheme.backgroundCard,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: DarkTheme.borderLight,
-          width: 1,
-        ),
+        border: Border.all(color: DarkTheme.borderLight, width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -239,39 +232,41 @@ class WelcomeScreenView extends StatelessWidget {
     ];
 
     return Column(
-      children: features.map((feature) => 
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: DarkTheme.primaryPurple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  feature['icon'] as IconData,
-                  color: DarkTheme.primaryPurpleLight,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Flexible(
-                child: Text(
-                  feature['text'] as String,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    color: DarkTheme.textSecondary,
-                    fontWeight: FontWeight.w500,
+      children: features
+          .map(
+            (feature) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: DarkTheme.primaryPurple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      feature['icon'] as IconData,
+                      color: DarkTheme.primaryPurpleLight,
+                      size: 24,
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 16),
+                  Flexible(
+                    child: Text(
+                      feature['text'] as String,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: DarkTheme.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ).toList(),
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -282,10 +277,7 @@ class WelcomeScreenView extends StatelessWidget {
       height: 64,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            DarkTheme.primaryPurple,
-            DarkTheme.primaryPurpleLight,
-          ],
+          colors: [DarkTheme.primaryPurple, DarkTheme.primaryPurpleLight],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -360,9 +352,9 @@ class WelcomeScreenView extends StatelessWidget {
                 width: 24,
                 height: 24,
                 fit: BoxFit.cover,
+                cacheWidth: 24,
+                cacheHeight: 24,
                 filterQuality: FilterQuality.high,
-                cacheWidth: 1200,
-                cacheHeight: 1200,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     width: 24,
