@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'dart:math';
 import 'package:kazerest_form/config/dark_theme.dart';
 import 'package:kazerest_form/view/questionnaire/welcome_screen_view.dart';
 import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 import 'package:kazerest_form/view/widgets/custom_button.dart' as widgets;
 import 'package:kazerest_form/controller/questionnaire_controller.dart';
+import 'package:confetti/confetti.dart';
 
-class FinishScreenView extends StatelessWidget {
+class FinishScreenView extends StatefulWidget {
   const FinishScreenView({super.key});
+
+  @override
+  State<FinishScreenView> createState() => _FinishScreenViewState();
+}
+
+class _FinishScreenViewState extends State<FinishScreenView> {
+  late ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    // Start the animation when the screen loads
+    _confettiController.play();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +44,65 @@ class FinishScreenView extends StatelessWidget {
             children: [
               _buildResponsiveLayout(context),
               const PositionedCircularProgress(showOnFinishScreen: true),
+              // Top center cannon
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirection: pi / 2, // down
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 20,
+                  maxBlastForce: 20,
+                  minBlastForce: 10,
+                  gravity: 0.1,
+                  colors: const [
+                    DarkTheme.primaryPurple,
+                    DarkTheme.primaryPurpleLight,
+                    DarkTheme.accentGreen,
+                    Colors.orange,
+                    Colors.pink,
+                    Colors.blue,
+                  ],
+                ),
+              ),
+              // Left side cannon
+              Align(
+                alignment: Alignment.centerLeft,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirection: 0, // right
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 10,
+                  maxBlastForce: 20,
+                  minBlastForce: 10,
+                  gravity: 0.1,
+                  colors: const [
+                    DarkTheme.primaryPurple,
+                    DarkTheme.primaryPurpleLight,
+                    DarkTheme.accentGreen,
+                    Colors.orange,
+                  ],
+                ),
+              ),
+              // Right side cannon
+              Align(
+                alignment: Alignment.centerRight,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirection: pi, // left
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 10,
+                  maxBlastForce: 20,
+                  minBlastForce: 10,
+                  gravity: 0.1,
+                  colors: const [
+                    DarkTheme.primaryPurple,
+                    DarkTheme.primaryPurpleLight,
+                    Colors.pink,
+                    Colors.blue,
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -260,6 +342,19 @@ class FinishScreenView extends StatelessWidget {
   Widget _buildActionButtons() {
     return Column(
       children: [
+        // Fireworks button
+        SizedBox(
+          width: double.infinity,
+          child: widgets.CustomButton(
+            text: 'Celebrar de Nuevo',
+            icon: Icons.celebration,
+            isSecondary: true,
+            onPressed: () {
+              _confettiController.play();
+            },
+          ),
+        ),
+        const SizedBox(height: 12),
         // Primary action - Start new evaluation
         SizedBox(
           width: double.infinity,
@@ -289,126 +384,5 @@ class FinishScreenView extends StatelessWidget {
     
     // Navigate to the welcome screen for a fresh start
     Get.offAll(() => const WelcomeScreenView());
-  }
-
-  void _showContactInfo() {
-    Get.dialog(
-      Dialog(
-        backgroundColor: DarkTheme.backgroundCard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.contact_mail_rounded,
-                size: 48,
-                color: DarkTheme.primaryPurple,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'Información de Contacto',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: DarkTheme.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildContactItem(
-                icon: Icons.email_rounded,
-                title: 'Email',
-                value: 'contacto@kazerest.com',
-              ),
-              _buildContactItem(
-                icon: Icons.phone_rounded,
-                title: 'Teléfono',
-                value: '+1 (555) 123-4567',
-              ),
-              _buildContactItem(
-                icon: Icons.language_rounded,
-                title: 'Sitio Web',
-                value: 'www.kazerest.com',
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: widgets.CustomButton(
-                  text: 'Cerrar',
-                  onPressed: () => Get.back(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactItem({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: DarkTheme.backgroundPrimary.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: DarkTheme.borderLight.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Fixed width container for icon to ensure consistent alignment
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: DarkTheme.primaryPurple.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(
-              icon,
-              size: 20,
-              color: DarkTheme.primaryPurple,
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Expanded to take remaining space and ensure consistent layout
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: DarkTheme.textSecondary,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: DarkTheme.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

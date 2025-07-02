@@ -29,10 +29,130 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>kazerest_form</title>
+  <title>Kazerest Form</title>
   <link rel="manifest" href="manifest.json">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+    
+    #loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    
+    .loading-logo {
+      width: 120px;
+      height: auto;
+      margin-bottom: 20px;
+      animation: pulse 2s infinite;
+    }
+    
+    .loading-text {
+      font-size: 18px;
+      color: #333333;
+      text-align: center;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #0175C2;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin-top: 15px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+  <!-- Loading indicator -->
+  <div id="loading">
+    <img src="assets/logo.png" alt="Kazerest" class="loading-logo" onerror="this.style.display='none'" />
+    <div class="loading-text">Cargando Kazerest Form...</div>
+    <div class="spinner"></div>
+  </div>
+  
   <script src="flutter_bootstrap.js" async></script>
+  
+  <script>
+    // Función para ocultar el indicador de carga
+    function hideLoading() {
+      const loadingElement = document.getElementById('loading');
+      if (loadingElement) {
+        loadingElement.style.opacity = '0';
+        loadingElement.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          loadingElement.remove();
+        }, 500);
+      }
+    }
+    
+    // Debug: mostrar información en consola
+    console.log('Kazerest Form - Starting application...');
+    
+    // Ocultar loading cuando Flutter esté listo
+    window.addEventListener('flutter-first-frame', function() {
+      console.log('Flutter first frame rendered');
+      hideLoading();
+    });
+    
+    // Fallback más agresivo: ocultar loading después de varios intentos
+    setTimeout(function() {
+      console.log('Loading timeout 1 - checking if app is ready');
+      if (document.querySelector('flutter-app') || document.querySelector('flt-root')) {
+        console.log('Flutter app detected, hiding loading');
+        hideLoading();
+      }
+    }, 5000);
+    
+    setTimeout(function() {
+      console.log('Loading timeout 2 - forcing hide');
+      hideLoading();
+    }, 10000);
+    
+    // Manejar errores de carga
+    window.addEventListener('error', function(e) {
+      console.error('Error loading app:', e);
+      document.getElementById('loading').innerHTML = 
+        '<div style="text-align: center; color: #ff0000; font-family: Arial;">' +
+        '<h3>Error al cargar la aplicación</h3>' +
+        '<p>Por favor, recarga la página</p>' +
+        '<button onclick="window.location.reload()" style="padding: 10px 20px; font-size: 16px;">Recargar</button>' +
+        '</div>';
+    });
+    
+    // Verificar si el navegador es compatible
+    if (!window.fetch || !window.Promise) {
+      document.getElementById('loading').innerHTML = 
+        '<div style="text-align: center; color: #ff0000; font-family: Arial;">' +
+        '<h3>Navegador no compatible</h3>' +
+        '<p>Por favor, usa un navegador más moderno</p>' +
+        '</div>';
+    }
+  </script>
 </body>
 </html>
