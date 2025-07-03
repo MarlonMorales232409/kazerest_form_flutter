@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kazerest_form/config/dark_theme.dart';
 import 'package:kazerest_form/view/questionnaire/questionnaire_main_view.dart';
+import 'package:kazerest_form/view/questionnaire/circular_progress_widget.dart';
 
 class WelcomeScreenView extends StatelessWidget {
   const WelcomeScreenView({super.key});
@@ -462,6 +463,9 @@ class WelcomeScreenView extends StatelessWidget {
   }
 
   void _startQuestionnaire() {
+    // Reset the progress indicator to initial state for a fresh start
+    CircularProgressWidget.resetProgress();
+    
     // Navigate to the main questionnaire
     Get.offAll(() => QuestionnaireMainView());
   }

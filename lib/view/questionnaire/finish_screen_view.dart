@@ -382,6 +382,9 @@ class _FinishScreenViewState extends State<FinishScreenView> {
       print('Controller not found, will be created fresh: $e');
     }
     
+    // Reset the progress indicator to initial state
+    CircularProgressWidget.resetProgress();
+    
     // Navigate to the welcome screen for a fresh start
     Get.offAll(() => const WelcomeScreenView());
   }

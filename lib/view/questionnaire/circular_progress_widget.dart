@@ -16,6 +16,12 @@ class CircularProgressWidget extends StatefulWidget {
 
   @override
   State<CircularProgressWidget> createState() => _CircularProgressWidgetState();
+  
+  // Static method to reset progress state for new evaluations
+  static void resetProgress() {
+    _CircularProgressWidgetState._persistentProgress = 0.0;
+    _CircularProgressWidgetState._finishScreenVisited = false;
+  }
 }
 
 class _CircularProgressWidgetState extends State<CircularProgressWidget>
