@@ -221,42 +221,118 @@ class WelcomeScreenView extends StatelessWidget {
       },
     ];
 
-    return Column(
-      children: features
-          .map(
-            (feature) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isMobile = screenWidth < 768;
+        
+        if (isMobile) {
+          // Layout vertical para móviles - tarjetas full width
+          return Column(
+            children: features.asMap().entries.map((entry) {
+              final index = entry.key;
+              final feature = entry.value;
+              return Column(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: DarkTheme.primaryPurple.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      feature['icon'] as IconData,
-                      color: DarkTheme.primaryPurpleLight,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Flexible(
-                    child: Text(
-                      feature['text'] as String,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: DarkTheme.textSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                  if (index > 0) const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity, // Full width en móviles
+                    child: _buildFeatureItemVertical(
+                      icon: feature['icon'] as IconData,
+                      text: feature['text'] as String,
                     ),
                   ),
                 ],
+              );
+            }).toList(),
+          );
+        } else {
+          // Layout horizontal para pantallas más grandes con espacios
+          return Row(
+            children: features.asMap().entries.map((entry) {
+              final index = entry.key;
+              final feature = entry.value;
+              return [
+                if (index > 0) const SizedBox(width: 24), // Espacio entre tarjetas
+                Expanded(
+                  child: _buildFeatureItemVertical(
+                    icon: feature['icon'] as IconData,
+                    text: feature['text'] as String,
+                  ),
+                ),
+              ];
+            }).expand((widgets) => widgets).toList(),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildFeatureItemVertical({
+    required IconData icon,
+    required String text,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: DarkTheme.backgroundCard.withOpacity(0.7),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: DarkTheme.borderLight.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Contenedor del ícono con diseño moderno
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  DarkTheme.primaryPurple.withOpacity(0.1),
+                  DarkTheme.primaryPurpleLight.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: DarkTheme.primaryPurple.withOpacity(0.2),
+                width: 1,
               ),
             ),
-          )
-          .toList(),
+            child: Icon(
+              icon,
+              size: 32,
+              color: DarkTheme.primaryPurpleLight,
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Texto centrado y responsive
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: DarkTheme.textSecondary,
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
     );
   }
 
