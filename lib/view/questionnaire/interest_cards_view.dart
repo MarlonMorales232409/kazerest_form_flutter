@@ -41,22 +41,61 @@ class InterestCardsView extends StatelessWidget {
   }
 
   Widget _buildMobileLayout() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const MobileProgressHeader(),
-          _buildHeader(),
-          const SizedBox(height: 32),
-          Expanded(
-            child: _buildCardStack(),
-          ),
-          const SizedBox(height: 24),
-          _buildActionButtons(),
-          const SizedBox(height: 16),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = constraints.maxHeight;
+        final minRequiredHeight = 700.0; // Altura mínima necesaria
+        
+        if (screenHeight < minRequiredHeight) {
+          // Si la pantalla es muy pequeña, usar ScrollView
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              constraints: BoxConstraints(
+                minHeight: screenHeight,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const MobileProgressHeader(),
+                    _buildCompactHeader(),
+                    const SizedBox(height: 20),
+                    Container(
+                      height: 350, // Altura fija más compacta para las tarjetas
+                      child: _buildCardStack(),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildActionButtons(),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+            ),
+          );
+        } else {
+          // Layout normal para pantallas más grandes
+          return Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const MobileProgressHeader(),
+                _buildHeader(),
+                const SizedBox(height: 32),
+                Expanded(
+                  child: _buildCardStack(),
+                ),
+                const SizedBox(height: 24),
+                _buildActionButtons(),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        }
+      },
     );
   }
 
@@ -143,6 +182,33 @@ class InterestCardsView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
+        _buildProgressIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildCompactHeader() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          '¿Qué funciones te interesan?',
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: DarkTheme.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        const Text(
+          'Arrastra las tarjetas para seleccionar las funciones que más te interesan',
+          style: TextStyle(
+            fontSize: 14,
+            color: DarkTheme.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 12),
         _buildProgressIndicator(),
       ],
     );
@@ -288,9 +354,33 @@ class InterestCardsView extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
         final isDesktop = screenWidth > 1024;
-        final cardHeight = isDesktop ? 450.0 : 400.0;
-        final cardMargin = isDesktop ? 16.0 : 8.0;
+        final isTablet = screenWidth > 768 && screenWidth <= 1024;
+        final isSmallScreen = screenHeight < 700;
+        
+        // Ajustes responsivos para diferentes tamaños de pantalla
+        double cardHeight;
+        double cardMargin;
+        double cardPadding;
+        
+        if (isDesktop) {
+          cardHeight = 450.0;
+          cardMargin = 16.0;
+          cardPadding = 24.0;
+        } else if (isTablet) {
+          cardHeight = 400.0;
+          cardMargin = 12.0;
+          cardPadding = 20.0;
+        } else if (isSmallScreen) {
+          cardHeight = 320.0; // Más compacto para pantallas pequeñas
+          cardMargin = 8.0;
+          cardPadding = 16.0;
+        } else {
+          cardHeight = 400.0;
+          cardMargin = 8.0;
+          cardPadding = 24.0;
+        }
         
         return AnimatedContainer(
           duration: const Duration(milliseconds: 400),
@@ -305,7 +395,7 @@ class InterestCardsView extends StatelessWidget {
               borderRadius: BorderRadius.circular(24),
             ),
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(cardPadding),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
                 gradient: DarkTheme.cardGradient,
@@ -346,27 +436,31 @@ class InterestCardsView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: isSmallScreen ? 12 : 20),
                   Text(
                     module.title,
-                    style: const TextStyle(
-                      fontSize: 24,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 20 : 24,
                       fontWeight: FontWeight.bold,
                       color: DarkTheme.textPrimary,
                       height: 1.2,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    module.description,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: DarkTheme.textSecondary,
-                      height: 1.6,
+                  SizedBox(height: isSmallScreen ? 8 : 16),
+                  Expanded(
+                    child: Text(
+                      module.description,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 14 : 18,
+                        color: DarkTheme.textSecondary,
+                        height: 1.4,
+                      ),
+                      maxLines: isSmallScreen ? 3 : null,
+                      overflow: isSmallScreen ? TextOverflow.ellipsis : null,
                     ),
                   ),
-                  const Spacer(),
-                  _buildCardFeatures(module),
+                  const SizedBox(height: 12),
+                  _buildCardFeatures(module, isCompact: isSmallScreen),
                 ],
               ),
             ),
@@ -376,45 +470,50 @@ class InterestCardsView extends StatelessWidget {
     );
   }
 
-  Widget _buildCardFeatures(SystemModule module) {
+  Widget _buildCardFeatures(SystemModule module, {bool isCompact = false}) {
     // Add some example features based on module type
     List<String> features = _getModuleFeatures(module.id);
+    
+    // Limitar features para pantallas pequeñas
+    if (isCompact && features.length > 2) {
+      features = features.take(2).toList();
+    }
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Características principales:',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: isCompact ? 12 : 16,
             fontWeight: FontWeight.w600,
             color: DarkTheme.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: isCompact ? 4 : 8),
         ...features.map((feature) => Padding(
-          padding: const EdgeInsets.only(bottom: 4),
+          padding: EdgeInsets.only(bottom: isCompact ? 2 : 4),
           child: Row(
             children: [
               Container(
-                width: 16,
-                height: 16,
+                width: isCompact ? 12 : 16,
+                height: isCompact ? 12 : 16,
                 decoration: BoxDecoration(
                   gradient: DarkTheme.greenGradient,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(isCompact ? 6 : 8),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check,
-                  size: 12,
+                  size: isCompact ? 8 : 12,
                   color: DarkTheme.textPrimary,
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: isCompact ? 6 : 8),
               Expanded(
                 child: Text(
                   feature,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: isCompact ? 12 : 16,
                     color: DarkTheme.textMuted,
                   ),
                 ),
@@ -454,122 +553,129 @@ class InterestCardsView extends StatelessWidget {
   }
 
   Widget _buildCompletionCard() {
-    return Center(
-      child: Container(
-        width: double.infinity,
-        height: 400,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        child: Card(
-          elevation: 12,
-          shadowColor: DarkTheme.shadowMedium,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenHeight = MediaQuery.of(context).size.height;
+        final isSmallScreen = screenHeight < 700;
+        
+        return Center(
           child: Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  DarkTheme.backgroundCard,
-                  DarkTheme.backgroundCardElevated,
-                ],
+            width: double.infinity,
+            height: isSmallScreen ? 280 : 400,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            child: Card(
+              elevation: 12,
+              shadowColor: DarkTheme.shadowMedium,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-              border: Border.all(
-                color: DarkTheme.glassBorder,
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: DarkTheme.accentGreen.withOpacity(0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    gradient: DarkTheme.greenGradient,
-                    borderRadius: BorderRadius.circular(40),
-                    boxShadow: [
-                      BoxShadow(
-                        color: DarkTheme.accentGreen.withOpacity(0.4),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                      ),
+              child: Container(
+                padding: EdgeInsets.all(isSmallScreen ? 20 : 32),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(24),
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      DarkTheme.backgroundCard,
+                      DarkTheme.backgroundCardElevated,
                     ],
                   ),
-                  child: const Icon(
-                    Icons.check_rounded,
-                    color: DarkTheme.textPrimary,
-                    size: 40,
+                  border: Border.all(
+                    color: DarkTheme.glassBorder,
+                    width: 1,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: DarkTheme.accentGreen.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                const Text(
-                  '¡Perfecto!',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: DarkTheme.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Obx(() => Text(
-                  'Has seleccionado ${controller.interestedModules.length} módulos que te interesan',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: DarkTheme.textSecondary,
-                    height: 1.5,
-                  ),
-                )),
-                const SizedBox(height: 32),
-                Container(
-                  width: double.infinity,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    gradient: DarkTheme.primaryGradient,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: DarkTheme.primaryPurple.withOpacity(0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: isSmallScreen ? 60 : 80,
+                      height: isSmallScreen ? 60 : 80,
+                      decoration: BoxDecoration(
+                        gradient: DarkTheme.greenGradient,
+                        borderRadius: BorderRadius.circular(isSmallScreen ? 30 : 40),
+                        boxShadow: [
+                          BoxShadow(
+                            color: DarkTheme.accentGreen.withOpacity(0.4),
+                            blurRadius: 16,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () => controller.goToStep(1),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: DarkTheme.textPrimary,
+                        size: isSmallScreen ? 30 : 40,
                       ),
                     ),
-                    child: const Text(
-                      'Continuar con Prioridades',
+                    SizedBox(height: isSmallScreen ? 16 : 24),
+                    Text(
+                      '¡Perfecto!',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontSize: isSmallScreen ? 22 : 28,
+                        fontWeight: FontWeight.bold,
                         color: DarkTheme.textPrimary,
                       ),
                     ),
-                  ),
+                    SizedBox(height: isSmallScreen ? 8 : 12),
+                    Obx(() => Text(
+                      'Has seleccionado ${controller.interestedModules.length} módulos que te interesan',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: isSmallScreen ? 14 : 16,
+                        color: DarkTheme.textSecondary,
+                        height: 1.5,
+                      ),
+                    )),
+                    SizedBox(height: isSmallScreen ? 20 : 32),
+                    Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: DarkTheme.primaryGradient,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: DarkTheme.primaryPurple.withOpacity(0.4),
+                            blurRadius: 12,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () => controller.goToStep(1),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Continuar con Prioridades',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w600,
+                            color: DarkTheme.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -579,96 +685,108 @@ class InterestCardsView extends StatelessWidget {
         return const SizedBox.shrink();
       }
 
-      return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              gradient: DarkTheme.redGradient,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: DarkTheme.accentRed.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: ElevatedButton(
-              onPressed: () => controller.swipeLeft(
-                systemModules[controller.currentCardIndex.value],
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.close_rounded, size: 20, color: DarkTheme.textPrimary),
-                  SizedBox(width: 8),
-                  Text(
-                    'No me interesa',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: DarkTheme.textPrimary,
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final screenWidth = MediaQuery.of(context).size.width;
+          final screenHeight = MediaQuery.of(context).size.height;
+          final isSmallScreen = screenHeight < 700 || screenWidth < 400;
+          
+          return Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: isSmallScreen ? 48 : 56,
+                  decoration: BoxDecoration(
+                    gradient: DarkTheme.redGradient,
+                    borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DarkTheme.accentRed.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () => controller.swipeLeft(
+                      systemModules[controller.currentCardIndex.value],
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.close_rounded, 
+                             size: isSmallScreen ? 18 : 20, 
+                             color: DarkTheme.textPrimary),
+                        SizedBox(width: isSmallScreen ? 6 : 8),
+                        Text(
+                          isSmallScreen ? 'No' : 'No me interesa',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w600,
+                            color: DarkTheme.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Container(
-            height: 56,
-            decoration: BoxDecoration(
-              gradient: DarkTheme.greenGradient,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: DarkTheme.accentGreen.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: ElevatedButton(
-              onPressed: () => controller.swipeRight(
-                systemModules[controller.currentCardIndex.value],
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite_rounded, size: 20, color: DarkTheme.textPrimary),
-                  SizedBox(width: 8),
-                  Text(
-                    'Me interesa',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: DarkTheme.textPrimary,
+              SizedBox(width: isSmallScreen ? 12 : 16),
+              Expanded(
+                child: Container(
+                  height: isSmallScreen ? 48 : 56,
+                  decoration: BoxDecoration(
+                    gradient: DarkTheme.greenGradient,
+                    borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DarkTheme.accentGreen.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () => controller.swipeRight(
+                      systemModules[controller.currentCardIndex.value],
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.favorite_rounded, 
+                             size: isSmallScreen ? 18 : 20, 
+                             color: DarkTheme.textPrimary),
+                        SizedBox(width: isSmallScreen ? 6 : 8),
+                        Text(
+                          isSmallScreen ? 'Sí' : 'Me interesa',
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.w600,
+                            color: DarkTheme.textPrimary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-        ],
+            ],
+          );
+        },
       );
     });
   }
