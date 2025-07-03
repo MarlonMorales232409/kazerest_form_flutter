@@ -31,43 +31,37 @@ class WelcomeScreenView extends StatelessWidget {
   }
 
   Widget _buildMobileLayout(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: _buildScrollableContent(),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-          child: _buildStartButton(),
-        ),
-        _buildWatermark(),
-        const SizedBox(height: 8),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24.0),
+      child: Column(
+        children: [
+          _buildScrollableContent(),
+          const SizedBox(height: 24),
+          _buildStartButton(),
+          const SizedBox(height: 16),
+          _buildWatermark(),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 
   Widget _buildTabletLayout(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 48.0,
-              vertical: 32.0,
-            ),
-            child: _buildScrollableContent(),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(48, 8, 48, 16),
-          child: _buildStartButton(),
-        ),
-        _buildWatermark(),
-        const SizedBox(height: 8),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 48.0,
+        vertical: 32.0,
+      ),
+      child: Column(
+        children: [
+          _buildScrollableContent(),
+          const SizedBox(height: 24),
+          _buildStartButton(),
+          const SizedBox(height: 16),
+          _buildWatermark(),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 
@@ -75,21 +69,18 @@ class WelcomeScreenView extends StatelessWidget {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(48.0),
-                child: _buildScrollableContent(),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(48, 8, 48, 16),
-              child: _buildStartButton(),
-            ),
-            _buildWatermark(),
-            const SizedBox(height: 16),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(48.0),
+          child: Column(
+            children: [
+              _buildScrollableContent(),
+              const SizedBox(height: 24),
+              _buildStartButton(),
+              const SizedBox(height: 16),
+              _buildWatermark(),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
@@ -107,7 +98,6 @@ class WelcomeScreenView extends StatelessWidget {
         _buildDescription(),
         const SizedBox(height: 28),
         _buildFeaturesList(),
-        const SizedBox(height: 16), // Extra bottom padding for scroll
       ],
     );
   }

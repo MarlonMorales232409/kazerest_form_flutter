@@ -15,39 +15,15 @@ class CalificationsView extends StatefulWidget {
 
 class _CalificationsViewState extends State<CalificationsView> {
   final QuestionnaireController controller = Get.find<QuestionnaireController>();
-  final ScrollController _scrollController = ScrollController();
-  final RxBool _isHeaderVisible = true.obs;
-  double _previousScrollPosition = 0.0;
 
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    final currentScrollPosition = _scrollController.position.pixels;
-    const threshold = 10.0;
-
-    if ((currentScrollPosition - _previousScrollPosition).abs() > threshold) {
-      if (currentScrollPosition > _previousScrollPosition && currentScrollPosition > 50) {
-        if (_isHeaderVisible.value) {
-          _isHeaderVisible.value = false;
-        }
-      } else if (currentScrollPosition < _previousScrollPosition) {
-        if (!_isHeaderVisible.value) {
-          _isHeaderVisible.value = true;
-        }
-      }
-      _previousScrollPosition = currentScrollPosition;
-    }
   }
 
   @override
@@ -79,106 +55,116 @@ class _CalificationsViewState extends State<CalificationsView> {
   }
 
   Widget _buildMobileLayout() {
-    return Column(
-      children: [
-        // Header animado que se oculta/muestra
-        Obx(() => AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          height: _isHeaderVisible.value ? null : 0,
-          child: AnimatedOpacity(
-            duration: const Duration(milliseconds: 300),
-            opacity: _isHeaderVisible.value ? 1.0 : 0.0,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0),
+    return SafeArea(
+      child: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          // Header que se mueve con el scroll
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
+                  const SizedBox(height: 32),
                   const MobileProgressHeader(),
+                  const SizedBox(height: 32),
                   _buildHeader(),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
           ),
-        )),
-        // Contenido principal con scroll
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
-                Expanded(
-                  child: _buildCalificationsList(),
-                ),
-                const SizedBox(height: 24),
-                _buildNavigationButtons(),
-                const SizedBox(height: 16),
-              ],
+          // Califications list
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final calification = califications[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: _buildCalificationItem(calification, index),
+                );
+              },
+              childCount: califications.length,
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTabletLayout() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 32),
-          Expanded(
-            child: _buildCalificationsList(),
+          // Navigation buttons
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  _buildNavigationButtons(),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 24),
-          _buildNavigationButtons(),
-          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
-  Widget _buildDesktopLayout() {
-    return Center(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        padding: const EdgeInsets.all(48.0),
-        child: Row(
+  Widget _buildTabletLayout() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Left side - Header and instructions
+            _buildHeader(),
+            const SizedBox(height: 32),
             Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 48.0),
+              child: _buildCalificationsList(),
+            ),
+            const SizedBox(height: 24),
+            _buildNavigationButtons(),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return SafeArea(
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          padding: const EdgeInsets.all(48.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left side - Header and instructions
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 48.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDesktopHeader(),
+                      const SizedBox(height: 32),
+                      _buildDesktopInstructions(),
+                    ],
+                  ),
+                ),
+              ),
+              // Right side - Califications list
+              Expanded(
+                flex: 3,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDesktopHeader(),
-                    const SizedBox(height: 32),
-                    _buildDesktopInstructions(),
+                    Expanded(
+                      child: _buildCalificationsList(),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildNavigationButtons(),
                   ],
                 ),
               ),
-            ),
-            // Right side - Califications list
-            Expanded(
-              flex: 3,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: _buildCalificationsList(),
-                  ),
-                  const SizedBox(height: 24),
-                  _buildNavigationButtons(),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -217,7 +203,7 @@ class _CalificationsViewState extends State<CalificationsView> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         const Text(
           'Evalúa cada aspecto según su importancia para tu negocio. Esta información nos permitirá personalizar mejor nuestra propuesta.',
           style: TextStyle(
@@ -226,7 +212,7 @@ class _CalificationsViewState extends State<CalificationsView> {
             height: 1.5,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -281,11 +267,8 @@ class _CalificationsViewState extends State<CalificationsView> {
   }
 
   Widget _buildCalificationsList() {
-    final screenWidth = MediaQuery.of(Get.context!).size.width;
-    final isMobile = screenWidth <= 768;
-
+    // Solo para tablet y desktop (móvil usa SliverList)
     return ListView.builder(
-      controller: isMobile ? _scrollController : null,
       physics: const BouncingScrollPhysics(),
       itemCount: califications.length,
       itemBuilder: (context, index) {
@@ -297,7 +280,7 @@ class _CalificationsViewState extends State<CalificationsView> {
 
   Widget _buildCalificationItem(calification, int index) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 20),
+      margin: const EdgeInsets.only(bottom: 24),
       child: Card(
         elevation: 4,
         shadowColor: DarkTheme.shadowMedium,
@@ -544,26 +527,51 @@ class _CalificationsViewState extends State<CalificationsView> {
   }
 
   Widget _buildNavigationButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth <= 600; // Breakpoint más estricto para móvil
+    
+    if (isMobile) {
+      // Columna de botones para móvil - siempre en columna
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          CustomButton(
             text: 'Anterior',
             onPressed: () => controller.previousStep(),
             isSecondary: true,
             icon: Icons.arrow_back,
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: CustomButton(
+          const SizedBox(height: 12),
+          CustomButton(
             text: 'Continuar',
             onPressed: () => controller.nextStep(),
             icon: Icons.arrow_forward,
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    } else {
+      // Fila de botones para tablet y desktop ocupando todo el ancho
+      return Row(
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: 'Anterior',
+              onPressed: () => controller.previousStep(),
+              isSecondary: true,
+              icon: Icons.arrow_back,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: CustomButton(
+              text: 'Continuar',
+              onPressed: () => controller.nextStep(),
+              icon: Icons.arrow_forward,
+            ),
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildDesktopHeader() {

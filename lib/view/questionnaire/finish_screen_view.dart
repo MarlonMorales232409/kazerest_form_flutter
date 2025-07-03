@@ -125,33 +125,34 @@ class _FinishScreenViewState extends State<FinishScreenView> {
   }
 
   Widget _buildMobileLayout(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
           const MobileProgressHeader(showOnFinishScreen: true),
-          Expanded(
-            child: _buildContent(),
-          ),
+          const SizedBox(height: 24),
+          _buildContent(),
+          const SizedBox(height: 24),
           _buildActionButtons(),
+          const SizedBox(height: 16),
           _buildWatermark(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
         ],
       ),
     );
   }
 
   Widget _buildTabletLayout(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
       child: Column(
         children: [
-          Expanded(
-            child: _buildContent(),
-          ),
+          _buildContent(),
+          const SizedBox(height: 24),
           _buildActionButtons(),
+          const SizedBox(height: 16),
           _buildWatermark(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -161,35 +162,34 @@ class _FinishScreenViewState extends State<FinishScreenView> {
     return Center(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 800),
-        padding: const EdgeInsets.all(48.0),
-        child: Column(
-          children: [
-            Expanded(
-              child: _buildContent(),
-            ),
-            _buildActionButtons(),
-            _buildWatermark(),
-            const SizedBox(height: 16),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(48.0),
+          child: Column(
+            children: [
+              _buildContent(),
+              const SizedBox(height: 24),
+              _buildActionButtons(),
+              const SizedBox(height: 16),
+              _buildWatermark(),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildContent() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildSuccessIcon(),
-          const SizedBox(height: 32),
-          _buildTitle(),
-          const SizedBox(height: 16),
-          _buildSubtitle(),
-          const SizedBox(height: 24),
-          _buildDescription(),
-        ],
-      ),
+    return Column(
+      children: [
+        _buildSuccessIcon(),
+        const SizedBox(height: 32),
+        _buildTitle(),
+        const SizedBox(height: 16),
+        _buildSubtitle(),
+        const SizedBox(height: 24),
+        _buildDescription(),
+      ],
     );
   }
 

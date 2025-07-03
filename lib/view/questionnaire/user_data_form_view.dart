@@ -47,81 +47,113 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   }
 
   Widget _buildMobileLayout() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const MobileProgressHeader(),
-          _buildHeader(),
-          const SizedBox(height: 32),
-          Expanded(
-            child: _buildForm(),
+    return SafeArea(
+      child: CustomScrollView(
+        physics: const ClampingScrollPhysics(),
+        slivers: [
+          // Header que se mueve con el scroll
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 32),
+                  const MobileProgressHeader(),
+                  const SizedBox(height: 32),
+                  _buildHeader(),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(height: 24),
-          _buildNavigationButtons(),
-          const SizedBox(height: 16),
+          // Form content
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: _buildForm(),
+            ),
+          ),
+          // Navigation buttons
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  _buildNavigationButtons(),
+                  const SizedBox(height: 32),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildTabletLayout() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          const SizedBox(height: 32),
-          Expanded(
-            child: _buildForm(),
-          ),
-          const SizedBox(height: 24),
-          _buildNavigationButtons(),
-          const SizedBox(height: 16),
-        ],
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(),
+            const SizedBox(height: 32),
+            Expanded(
+              child: SingleChildScrollView(
+                child: _buildForm(),
+              ),
+            ),
+            const SizedBox(height: 24),
+            _buildNavigationButtons(),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildDesktopLayout() {
-    return Center(
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 1200),
-        padding: const EdgeInsets.all(48.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Left side - Header and info
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 48.0),
+    return SafeArea(
+      child: Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          padding: const EdgeInsets.all(48.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Left side - Header and info
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 48.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDesktopHeader(),
+                      const SizedBox(height: 32),
+                      _buildDesktopSideInfo(),
+                    ],
+                  ),
+                ),
+              ),
+              // Right side - Form
+              Expanded(
+                flex: 3,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDesktopHeader(),
-                    const SizedBox(height: 32),
-                    _buildDesktopSideInfo(),
+                    Expanded(
+                      child: _buildDesktopForm(),
+                    ),
+                    const SizedBox(height: 24),
+                    _buildNavigationButtons(),
                   ],
                 ),
               ),
-            ),
-            // Right side - Form
-            Expanded(
-              flex: 3,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: _buildDesktopForm(),
-                  ),
-                  const SizedBox(height: 24),
-                  _buildNavigationButtons(),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -154,7 +186,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         const Text(
           'Para finalizar, compártenos tus datos de contacto. Te enviaremos una propuesta personalizada basada en tus respuestas.',
           style: TextStyle(
@@ -163,7 +195,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
             height: 1.5,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -199,7 +231,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
   Widget _buildForm() {
     return Form(
       key: _formKey,
-      child: ListView(
+      child: Column(
         children: [
           _buildPersonalInfoSection(),
           const SizedBox(height: 32),
@@ -256,7 +288,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             _buildTextFormField(
               label: 'Nombre completo *',
               hint: 'Ej: Juan Pérez García',
@@ -269,7 +301,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildTextFormField(
               label: 'Teléfono de la oficina *',
               hint: 'Ej: +52 55 1234 5678',
@@ -283,7 +315,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildTextFormField(
               label: 'Correo electrónico *',
               hint: 'Ej: juan@mirestaurante.com',
@@ -351,7 +383,7 @@ class _UserDataFormViewState extends State<UserDataFormView> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             _buildTextFormField(
               label: 'Nombre del negocio *',
               hint: 'Ej: Restaurante La Delicia',
@@ -498,14 +530,33 @@ class _UserDataFormViewState extends State<UserDataFormView> {
 
   Widget _buildNavigationButtons() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth > 1024;
+    final isMobile = screenWidth <= 600; // Breakpoint más estricto para móvil
     
-    if (isDesktop) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    if (isMobile) {
+      // Columna de botones para móvil - siempre en columna
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: 200,
+          CustomButton(
+            text: 'Anterior',
+            onPressed: () => controller.previousStep(),
+            isSecondary: true,
+            icon: Icons.arrow_back,
+          ),
+          const SizedBox(height: 12),
+          Obx(() => CustomButton(
+            text: 'Enviar Evaluación',
+            onPressed: _canSubmit() ? _submitForm : null,
+            isEnabled: _canSubmit(),
+            icon: Icons.send,
+          )),
+        ],
+      );
+    } else {
+      // Fila de botones para tablet y desktop ocupando todo el ancho
+      return Row(
+        children: [
+          Expanded(
             child: CustomButton(
               text: 'Anterior',
               onPressed: () => controller.previousStep(),
@@ -513,8 +564,8 @@ class _UserDataFormViewState extends State<UserDataFormView> {
               icon: Icons.arrow_back,
             ),
           ),
-          SizedBox(
-            width: 250,
+          const SizedBox(width: 12),
+          Expanded(
             child: Obx(() => CustomButton(
               text: 'Enviar Evaluación',
               onPressed: _canSubmit() ? _submitForm : null,
@@ -525,28 +576,6 @@ class _UserDataFormViewState extends State<UserDataFormView> {
         ],
       );
     }
-    
-    return Row(
-      children: [
-        Expanded(
-          child: CustomButton(
-            text: 'Anterior',
-            onPressed: () => controller.previousStep(),
-            isSecondary: true,
-            icon: Icons.arrow_back,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Obx(() => CustomButton(
-            text: 'Enviar Evaluación',
-            onPressed: _canSubmit() ? _submitForm : null,
-            isEnabled: _canSubmit(),
-            icon: Icons.send,
-          )),
-        ),
-      ],
-    );
   }
 
   bool _canSubmit() {
