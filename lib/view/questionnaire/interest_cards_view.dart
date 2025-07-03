@@ -690,6 +690,7 @@ class InterestCardsView extends StatelessWidget {
           final screenWidth = MediaQuery.of(context).size.width;
           final screenHeight = MediaQuery.of(context).size.height;
           final isSmallScreen = screenHeight < 700 || screenWidth < 400;
+          final isVerySmallScreen = screenWidth < 360; // iPhone SE or smaller
           
           return Row(
             children: [
@@ -717,20 +718,26 @@ class InterestCardsView extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
                       ),
+                      padding: EdgeInsets.symmetric(horizontal: isVerySmallScreen ? 8 : 12),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.close_rounded, 
-                             size: isSmallScreen ? 18 : 20, 
+                             size: isSmallScreen ? 16 : 20, 
                              color: DarkTheme.textPrimary),
-                        SizedBox(width: isSmallScreen ? 6 : 8),
-                        Text(
-                          isSmallScreen ? 'No' : 'No me interesa',
-                          style: TextStyle(
-                            fontSize: isSmallScreen ? 14 : 16,
-                            fontWeight: FontWeight.w600,
-                            color: DarkTheme.textPrimary,
+                        SizedBox(width: isVerySmallScreen ? 4 : (isSmallScreen ? 6 : 8)),
+                        Flexible(
+                          child: Text(
+                            isVerySmallScreen ? 'No' : (isSmallScreen ? 'No' : 'No me interesa'),
+                            style: TextStyle(
+                              fontSize: isVerySmallScreen ? 12 : (isSmallScreen ? 14 : 16),
+                              fontWeight: FontWeight.w600,
+                              color: DarkTheme.textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -738,7 +745,7 @@ class InterestCardsView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(width: isSmallScreen ? 12 : 16),
+              SizedBox(width: isVerySmallScreen ? 8 : (isSmallScreen ? 12 : 16)),
               Expanded(
                 child: Container(
                   height: isSmallScreen ? 48 : 56,
@@ -763,20 +770,26 @@ class InterestCardsView extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(isSmallScreen ? 12 : 16),
                       ),
+                      padding: EdgeInsets.symmetric(horizontal: isVerySmallScreen ? 8 : 12),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.favorite_rounded, 
-                             size: isSmallScreen ? 18 : 20, 
+                             size: isSmallScreen ? 16 : 20, 
                              color: DarkTheme.textPrimary),
-                        SizedBox(width: isSmallScreen ? 6 : 8),
-                        Text(
-                          isSmallScreen ? 'Sí' : 'Me interesa',
-                          style: TextStyle(
-                            fontSize: isSmallScreen ? 14 : 16,
-                            fontWeight: FontWeight.w600,
-                            color: DarkTheme.textPrimary,
+                        SizedBox(width: isVerySmallScreen ? 4 : (isSmallScreen ? 6 : 8)),
+                        Flexible(
+                          child: Text(
+                            isVerySmallScreen ? 'Sí' : (isSmallScreen ? 'Sí' : 'Me interesa'),
+                            style: TextStyle(
+                              fontSize: isVerySmallScreen ? 12 : (isSmallScreen ? 14 : 16),
+                              fontWeight: FontWeight.w600,
+                              color: DarkTheme.textPrimary,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
