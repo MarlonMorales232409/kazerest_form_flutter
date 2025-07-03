@@ -41,48 +41,49 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC7eOMuO3Kz2mqaHBDjuV9bBtksb9Qw0w0',
-    appId: '1:12733727606:web:ef1a7e8200d0484f437057',
-    messagingSenderId: '12733727606',
-    projectId: 'kazerest-form',
-    authDomain: 'kazerest-form.firebaseapp.com',
-    storageBucket: 'kazerest-form.firebasestorage.app',
-    measurementId: 'G-HYFEN7C7HT',
+    apiKey: 'AIzaSyAKAlH7HmyATUv1pmWXkPNnZs3KlcNEgYc',
+    appId: '1:641970037966:web:3b2548c3f609834d1f5c9f',
+    messagingSenderId: '641970037966',
+    projectId: 'kazerest-form-e3f51',
+    authDomain: 'kazerest-form-e3f51.firebaseapp.com',
+    storageBucket: 'kazerest-form-e3f51.firebasestorage.app',
+    measurementId: 'G-M0HFGC91VS',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBsuDl_96ntEl1-SZMB5YoKkW2wrigakdI',
-    appId: '1:12733727606:android:f41f34863679bd6a437057',
-    messagingSenderId: '12733727606',
-    projectId: 'kazerest-form',
-    storageBucket: 'kazerest-form.firebasestorage.app',
+    apiKey: 'AIzaSyAlDsHjIaC7_LwxX0YfWRnxOYJf1MAD_kU',
+    appId: '1:641970037966:android:e7b3eeb7c1ad600b1f5c9f',
+    messagingSenderId: '641970037966',
+    projectId: 'kazerest-form-e3f51',
+    storageBucket: 'kazerest-form-e3f51.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDRhQEppCZChYxUdGkU1M-dVjG-m1PMSMo',
-    appId: '1:12733727606:ios:cb54d306ea4af7bc437057',
-    messagingSenderId: '12733727606',
-    projectId: 'kazerest-form',
-    storageBucket: 'kazerest-form.firebasestorage.app',
+    apiKey: 'AIzaSyAGrJC5CIh612YMuoDdcyduzmVopzLQgks',
+    appId: '1:641970037966:ios:f71b0cc695735b701f5c9f',
+    messagingSenderId: '641970037966',
+    projectId: 'kazerest-form-e3f51',
+    storageBucket: 'kazerest-form-e3f51.firebasestorage.app',
     iosBundleId: 'com.example.kazerestForm',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDRhQEppCZChYxUdGkU1M-dVjG-m1PMSMo',
-    appId: '1:12733727606:ios:cb54d306ea4af7bc437057',
-    messagingSenderId: '12733727606',
-    projectId: 'kazerest-form',
-    storageBucket: 'kazerest-form.firebasestorage.app',
+    apiKey: 'AIzaSyAGrJC5CIh612YMuoDdcyduzmVopzLQgks',
+    appId: '1:641970037966:ios:f71b0cc695735b701f5c9f',
+    messagingSenderId: '641970037966',
+    projectId: 'kazerest-form-e3f51',
+    storageBucket: 'kazerest-form-e3f51.firebasestorage.app',
     iosBundleId: 'com.example.kazerestForm',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyC7eOMuO3Kz2mqaHBDjuV9bBtksb9Qw0w0',
-    appId: '1:12733727606:web:179b9bf7b4e791fa437057',
-    messagingSenderId: '12733727606',
-    projectId: 'kazerest-form',
-    authDomain: 'kazerest-form.firebaseapp.com',
-    storageBucket: 'kazerest-form.firebasestorage.app',
-    measurementId: 'G-HYFEN7C7HT',
+    apiKey: 'AIzaSyAKAlH7HmyATUv1pmWXkPNnZs3KlcNEgYc',
+    appId: '1:641970037966:web:01dc3a12e150f9271f5c9f',
+    messagingSenderId: '641970037966',
+    projectId: 'kazerest-form-e3f51',
+    authDomain: 'kazerest-form-e3f51.firebaseapp.com',
+    storageBucket: 'kazerest-form-e3f51.firebasestorage.app',
+    measurementId: 'G-5ET1YN52YN',
   );
+
 }

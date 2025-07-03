@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "12733727606",
-    "project_id": "kazerest-form",
-    "storage_bucket": "kazerest-form.firebasestorage.app"
+    "project_number": "641970037966",
+    "project_id": "kazerest-form-e3f51",
+    "storage_bucket": "kazerest-form-e3f51.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:12733727606:android:f41f34863679bd6a437057",
+        "mobilesdk_app_id": "1:641970037966:android:e7b3eeb7c1ad600b1f5c9f",
         "android_client_info": {
           "package_name": "com.example.kazerest_form"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBsuDl_96ntEl1-SZMB5YoKkW2wrigakdI"
+          "current_key": "AIzaSyAlDsHjIaC7_LwxX0YfWRnxOYJf1MAD_kU"
         }
       ],
       "services": {
