@@ -70,7 +70,7 @@ class ProgressDemoView extends StatelessWidget {
                               Expanded(
                                 child: CustomButton(
                                   text: 'Anterior',
-                                  icon: Icons.arrow_back_rounded,
+                                  icon: Icons.arrow_back,
                                   isSecondary: true,
                                   isEnabled: controller.currentStep.value > 0,
                                   onPressed: controller.currentStep.value > 0

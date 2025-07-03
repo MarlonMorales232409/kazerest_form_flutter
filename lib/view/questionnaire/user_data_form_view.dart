@@ -165,15 +165,6 @@ class _UserDataFormViewState extends State<UserDataFormView> {
       children: [
         Row(
           children: [
-            IconButton(
-              onPressed: () => controller.previousStep(),
-              icon: const Icon(Icons.arrow_back_ios),
-              style: IconButton.styleFrom(
-                backgroundColor: DarkTheme.backgroundCard,
-                foregroundColor: DarkTheme.textSecondary,
-              ),
-            ),
-            const SizedBox(width: 16),
             const Expanded(
               child: Text(
                 'Información de Contacto',
@@ -700,15 +691,6 @@ class _UserDataFormViewState extends State<UserDataFormView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        IconButton(
-          onPressed: () => controller.previousStep(),
-          icon: const Icon(Icons.arrow_back_ios),
-          style: IconButton.styleFrom(
-            backgroundColor: DarkTheme.backgroundCard,
-            foregroundColor: DarkTheme.textSecondary,
-            padding: const EdgeInsets.all(16),
-          ),
-        ),
         const SizedBox(height: 24),
         const Text(
           'Información de Contacto',

@@ -294,17 +294,67 @@ class _PriorityOrderingViewState extends State<PriorityOrderingView> {
       return _buildEmptyState();
     }
 
-    // For tablet layout - without height constraints to allow natural scrolling
-    return Column(
-      children: controller.priorityModules.asMap().entries.map((entry) {
-        final index = entry.key;
-        final module = entry.value;
-        return Container(
-          key: Key('module_${module.id}_$index'),
-          margin: const EdgeInsets.only(bottom: 16),
-          child: _buildSimplePriorityItem(module, index, context),
-        );
-      }).toList(),
+    // For tablet layout - with drag and drop functionality
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Colors.transparent,
+      ),
+      child: ReorderableListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.priorityModules.length,
+        buildDefaultDragHandles: false,
+        onReorder: (int oldIndex, int newIndex) {
+          try {
+            HapticFeedback.lightImpact();
+          } catch (e) {
+            // Ignore if not available
+          }
+          controller.reorderModules(oldIndex, newIndex);
+        },
+        proxyDecorator: (child, index, animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              final double animValue = Curves.easeInOut.transform(animation.value);
+              final double elevation = 4.0 + (16.0 - 4.0) * animValue;
+              final double scale = 1.0 + (0.08 * animValue);
+              
+              return Transform.scale(
+                scale: scale,
+                child: Material(
+                  elevation: elevation,
+                  color: Colors.transparent,
+                  shadowColor: DarkTheme.primaryPurple.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DarkTheme.primaryPurple.withOpacity(0.3 * animValue),
+                          blurRadius: 20 * animValue,
+                          offset: Offset(0, 8 * animValue),
+                        ),
+                      ],
+                    ),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: child,
+          );
+        },
+        itemBuilder: (context, index) {
+          final module = controller.priorityModules[index];
+          return Container(
+            key: Key('module_${module.id}_$index'),
+            margin: const EdgeInsets.only(bottom: 16),
+            child: _buildDraggablePriorityItem(module, index, context),
+          );
+        },
+      ),
     );
   }
 
@@ -477,109 +527,6 @@ class _PriorityOrderingViewState extends State<PriorityOrderingView> {
     );
   }
 
-  Widget _buildSimplePriorityItem(SystemModule module, int index, BuildContext context) {
-    return Container(
-      key: Key('module_${module.id}_$index'),
-      margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
-      child: Material(
-        elevation: 2,
-        shadowColor: DarkTheme.shadowMedium,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: DarkTheme.cardGradient,
-            border: Border.all(
-              color: DarkTheme.glassBorder,
-              width: 1.5,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: _getPriorityColor(index).withOpacity(0.15),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                // Priority number
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        _getPriorityColor(index),
-                        _getPriorityColor(index).withOpacity(0.8),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: _getPriorityColor(index).withOpacity(0.4),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${index + 1}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: DarkTheme.textPrimary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Module content
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        module.title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: DarkTheme.textPrimary,
-                          height: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        module.description,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: DarkTheme.textSecondary,
-                          height: 1.4,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Color _getPriorityColor(int index) {
     switch (index) {
       case 0:
@@ -640,7 +587,6 @@ class _PriorityOrderingViewState extends State<PriorityOrderingView> {
           const SizedBox(height: 24),
           CustomButton(
             text: 'Volver a Selección de Módulos',
-            icon: Icons.arrow_back_rounded,
             onPressed: () => controller.goToStep(0),
             isSecondary: true,
           ),
@@ -894,17 +840,67 @@ class _PriorityOrderingViewState extends State<PriorityOrderingView> {
   }
 
   Widget _buildDesktopPriorityList() {
-    // Desktop priority list without height constraints to allow natural scrolling
-    return Column(
-      children: controller.priorityModules.asMap().entries.map((entry) {
-        final index = entry.key;
-        final module = entry.value;
-        return Container(
-          key: Key('module_${module.id}_$index'),
-          margin: const EdgeInsets.only(bottom: 16),
-          child: _buildSimplePriorityItem(module, index, context),
-        );
-      }).toList(),
+    // Desktop priority list with drag and drop functionality
+    return Theme(
+      data: Theme.of(context).copyWith(
+        canvasColor: Colors.transparent,
+      ),
+      child: ReorderableListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: controller.priorityModules.length,
+        buildDefaultDragHandles: false,
+        onReorder: (int oldIndex, int newIndex) {
+          try {
+            HapticFeedback.lightImpact();
+          } catch (e) {
+            // Ignore if not available
+          }
+          controller.reorderModules(oldIndex, newIndex);
+        },
+        proxyDecorator: (child, index, animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              final double animValue = Curves.easeInOut.transform(animation.value);
+              final double elevation = 4.0 + (16.0 - 4.0) * animValue;
+              final double scale = 1.0 + (0.08 * animValue);
+              
+              return Transform.scale(
+                scale: scale,
+                child: Material(
+                  elevation: elevation,
+                  color: Colors.transparent,
+                  shadowColor: DarkTheme.primaryPurple.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: DarkTheme.primaryPurple.withOpacity(0.3 * animValue),
+                          blurRadius: 20 * animValue,
+                          offset: Offset(0, 8 * animValue),
+                        ),
+                      ],
+                    ),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+            child: child,
+          );
+        },
+        itemBuilder: (context, index) {
+          final module = controller.priorityModules[index];
+          return Container(
+            key: Key('module_${module.id}_$index'),
+            margin: const EdgeInsets.only(bottom: 16),
+            child: _buildDraggablePriorityItem(module, index, context),
+          );
+        },
+      ),
     );
   }
 }

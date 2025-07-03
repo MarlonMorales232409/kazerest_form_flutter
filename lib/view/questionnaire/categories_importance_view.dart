@@ -176,21 +176,6 @@ class _CategoriesImportanceViewState extends State<CategoriesImportanceView> {
       children: [
         Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DarkTheme.backgroundCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: DarkTheme.glassBorder),
-              ),
-              child: IconButton(
-                onPressed: () => controller.previousStep(),
-                icon: const Icon(Icons.arrow_back_ios),
-                style: IconButton.styleFrom(
-                  foregroundColor: DarkTheme.textSecondary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
             const Expanded(
               child: Text(
                 'Ventajas Tecnológicas',
@@ -279,22 +264,6 @@ class _CategoriesImportanceViewState extends State<CategoriesImportanceView> {
       children: [
         Row(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: DarkTheme.backgroundCard,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: DarkTheme.glassBorder),
-              ),
-              child: IconButton(
-                onPressed: () => controller.previousStep(),
-                icon: const Icon(Icons.arrow_back_ios),
-                style: IconButton.styleFrom(
-                  foregroundColor: DarkTheme.textSecondary,
-                  padding: const EdgeInsets.all(16),
-                ),
-              ),
-            ),
-            const SizedBox(width: 20),
             const Expanded(
               child: Text(
                 'Ventajas Tecnológicas',
